@@ -19,18 +19,16 @@ public class DBHelperManager extends SQLiteOpenHelper {
 
     }
 
-    SQLiteDatabase database;
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        database = sqLiteDatabase;
-        sqLiteDatabase.execSQL("Create Table BookMark {b_index integer primary key autoincrement, b_longitude double, b_latitude double, " +
-                "b_title text, b_image text, b_category integer, b_content text, b_rating float, b_remark text}");
-        sqLiteDatabase.execSQL("Create Table Category {c_index integer primary key autoincrement, c_title text, c_remark text}");
-        initInsert("맛집");
-        initInsert("모텔");
-        initInsert("미용실");
-        initInsert("카페");
+        sqLiteDatabase.execSQL("Create Table BookMark (b_index integer primary key autoincrement, b_longitude real, b_latitude real, " +
+                "b_title text, b_image text, b_category integer, b_content text, b_rating real, b_remark text)");
+        sqLiteDatabase.execSQL("Create Table Category (c_index integer primary key autoincrement, c_title text, c_remark text)");
+        initInsert("맛집", sqLiteDatabase);
+        initInsert("모텔", sqLiteDatabase);
+        initInsert("미용실", sqLiteDatabase);
+        initInsert("카페", sqLiteDatabase);
     }
 
     @Override
@@ -39,14 +37,14 @@ public class DBHelperManager extends SQLiteOpenHelper {
     }
     /**  * 처음 데이터를 만들어서 넣는 Category  * @param title  * 카테고리에 해당하는 데이터를 하나씩 입력하는 방식.  */
 
-    private void initInsert(String title) {
+    private void initInsert(String title, SQLiteDatabase db) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("c_title", title);
-        database.insert("Category", null, contentValues);
+        db.insert("Category", null, contentValues);
     }
     /**  * 현재 입력되어 있는 Category의 데이터를 반환받음  * @return  * Category에 있는 현재 데이터를 ArrayList형식으로 받음  */
     public ArrayList<String> selectCategory() {
-        Cursor cursor = database.query("Category", new String[]{"c_title"}, null, null, null, null, null);
+        Cursor cursor = getReadableDatabase().query("Category", new String[]{"c_title"}, null, null, null, null, null);
         //database.execSQL("select c_title from Category order by c_index");
         ArrayList<String> list = new ArrayList<String>();
         while (cursor.moveToNext()){

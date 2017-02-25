@@ -69,11 +69,11 @@ public class AddActivity extends BaseActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null){
                 LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.spinner_item,parent);
+                convertView = inflater.inflate(R.layout.spinner_item,parent, false);
             }
             TextView tv = (TextView)convertView.findViewById(R.id.spinner_item);
             tv.setText(list.get(position));
-            return null;
+            return convertView;
         }
     }
 }
