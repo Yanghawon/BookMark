@@ -12,6 +12,7 @@ import com.yangha.Bookmark.util.GpsInfo;
 public class AddActivity extends BaseActivity {
 
     private GpsInfo gps;
+    private IntroActivity intro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,7 @@ public class AddActivity extends BaseActivity {
                     Log.i(getLocalClassName(), latitude + "," + longitude);
                 } else {
                     // GPS 를 사용할수 없으므로
-                    gps.showSettingsAlert();
+                    intro.showSettingsAlert();
                 }
             }
         });
