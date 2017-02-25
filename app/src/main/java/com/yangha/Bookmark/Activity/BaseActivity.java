@@ -11,8 +11,17 @@ import android.view.Window;
  */
 
 public class BaseActivity extends AppCompatActivity {
+    /**
+     * ListActivity로 이동 
+     * */
     public static final int RELAYOUT_LISTACTIVITY = 1;
+    /** 
+     * AddActivity 로 이동 
+     */
     public static final int RELAYOUT_ADDACTIVITY = 2;
+    /**
+     * MainActivity 로 이동 
+     */
     public static final int RELAYOUT_MAINACTIVITY = 3;
 
     @Override
@@ -20,7 +29,13 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState, persistentState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
     }
-
+    /**
+     * relayout을 통해 Activity를 control함. 
+     * @param a <br>
+     *  RELAYOUT_LISTACTIVITY = 1;<br> 
+     *  RELAYOUT_ADDACTIVITY = 2;<br> 
+     *  RELAYOUT_MAINACTIVITY = 3;<br>
+     */
     public void relayout(int a){
         Intent intent = null;
         switch (a){

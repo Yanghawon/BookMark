@@ -37,13 +37,14 @@ public class DBHelperManager extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         // DATABASE 버전에 따라 ALTER문을 사용해서 DATABASE구조를 변경할 때
     }
+    /**  * 처음 데이터를 만들어서 넣는 Category  * @param title  * 카테고리에 해당하는 데이터를 하나씩 입력하는 방식.  */
 
     private void initInsert(String title) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("c_title", title);
         database.insert("Category", null, contentValues);
     }
-
+    /**  * 현재 입력되어 있는 Category의 데이터를 반환받음  * @return  * Category에 있는 현재 데이터를 ArrayList형식으로 받음  */
     public ArrayList<String> selectCategory() {
         Cursor cursor = database.query("Category", new String[]{"c_title"}, null, null, null, null, null);
         //database.execSQL("select c_title from Category order by c_index");
