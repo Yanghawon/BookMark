@@ -1,29 +1,41 @@
 package com.yangha.Bookmark.Activity;
 
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.melnykov.fab.FloatingActionButton;
 import com.yangha.Bookmark.R;
+import com.yangha.Bookmark.util.GpsInfo;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements LocationListener {
+
     private static String API_KEY = "17ab215709e639add24c6b924c031c70";
     FloatingActionButton fab1;
     FloatingActionButton fab2;
+    GpsInfo gps;
+    MapView mapView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fab1 = (FloatingActionButton)findViewById(R.id.fab_list);
-        fab2 = (FloatingActionButton)findViewById(R.id.fab_add);
+        fab1 = (FloatingActionButton) findViewById(R.id.fab_list);
+        fab2 = (FloatingActionButton) findViewById(R.id.fab_add);
 
-        MapView mapView = new MapView(this);
+        gps = new GpsInfo(this);
+
+        mapView = new MapView(this);
         mapView.setDaumMapApiKey(API_KEY);
 
         ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
@@ -32,7 +44,8 @@ public class MainActivity extends BaseActivity {
         mapView.setMapViewEventListener(new MapView.MapViewEventListener() {
             @Override
             public void onMapViewInitialized(MapView mapView) {
-                mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.53737528, 127.00557633), true);
+                mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(gps.getLatitude(), gps.getLongitude()), true);
+                Log.i(getLocalClassName(), "latitude : " + gps.getLatitude() + ",longitude : " + gps.getLongitude());
                 //MapView가 사용가능 한 상태가 되었음을 알려준다.
                 //onMapViewInitialized()가 호출된 이후에 MapView 객체가 제공하는 지도 조작 API들을 사용할 수 있다.
             }
@@ -103,7 +116,7 @@ public class MainActivity extends BaseActivity {
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            relayout(RELAYOUT_LISTACTIVITY);
+                relayout(RELAYOUT_LISTACTIVITY);
             }
         });
         fab2.setOnClickListener(new View.OnClickListener() {
@@ -113,4 +126,36 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        handler.sendMessage(handler.obtainMessage(1, location));
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case 1:
+                    Location location = (Location)msg.obj;
+                    mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(location.getLatitude(), location.getLongitude()), true);
+            }
+        }
+    };
 }

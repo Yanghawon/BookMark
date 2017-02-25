@@ -3,6 +3,8 @@ package com.yangha.Bookmark.Activity;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
@@ -22,44 +24,29 @@ public class IntroActivity extends BaseActivity {
                     Manifest.permission.ACCESS_COARSE_LOCATION
             }, 0);
         } else {
-            relayout(RELAYOUT_MAINACTIVITY);
+            mHandler.sendEmptyMessageDelayed(0, 2000);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        relayout(RELAYOUT_MAINACTIVITY);
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            relayout(RELAYOUT_MAINACTIVITY);
-        }else{
-            Toast.makeText(getBaseContext(),"앱이 종료됩니다.",Toast.LENGTH_SHORT).show();
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            mHandler.sendEmptyMessageDelayed(0, 2000);
+        } else {
+            Toast.makeText(getBaseContext(), "앱이 종료됩니다.", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
-/**
- * GPS 정보를 가져오지 못했을때
- * 설정값으로 갈지 물어보는 alert 창
- */
-    /*
-    public void showSettingsAlert() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
 
-        alertDialog.setTitle("GPS 사용 설정");
-        alertDialog.setMessage("GPS 셋팅이 되지 않았을수도 있습니다.\n 설정창으로 가시겠습니까?");
-
-        // OK 를 누르게 되면 설정창으로 이동합니다.
-
-        // Cancle 하면 종료 합니다.
-//        alertDialog.setNegativeButton("Cancel",
-//                new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.cancel();
-//                    }
-//                });
-
-        alertDialog.show();
-    }
-    */
-
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0:
+                    relayout(RELAYOUT_MAINACTIVITY);
+            }
+        }
+    };
 }
