@@ -11,4 +11,10 @@ public class DetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        relayout(RELAYOUT_MAINACTIVITY);
+    }
 }

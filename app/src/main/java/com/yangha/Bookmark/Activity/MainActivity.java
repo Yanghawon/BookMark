@@ -5,7 +5,6 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -41,11 +40,11 @@ public class MainActivity extends BaseActivity implements LocationListener {
         ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
         mapViewContainer.addView(mapView);
 
+
         mapView.setMapViewEventListener(new MapView.MapViewEventListener() {
             @Override
             public void onMapViewInitialized(MapView mapView) {
-                mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(gps.getLatitude(), gps.getLongitude()), true);
-                Log.i(getLocalClassName(), "latitude : " + gps.getLatitude() + ",longitude : " + gps.getLongitude());
+                handler.sendMessage(handler.obtainMessage(1,gps.getLocation()));
                 //MapView가 사용가능 한 상태가 되었음을 알려준다.
                 //onMapViewInitialized()가 호출된 이후에 MapView 객체가 제공하는 지도 조작 API들을 사용할 수 있다.
             }
@@ -154,7 +153,15 @@ public class MainActivity extends BaseActivity implements LocationListener {
             switch (msg.what){
                 case 1:
                     Location location = (Location)msg.obj;
-                    mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(location.getLatitude(), location.getLongitude()), true);
+                    MapPOIItem marker = new MapPOIItem();
+                    marker.setItemName("Default Marker");
+                    marker.setTag(0);
+                    marker.setMapPoint(MapPoint.mapPointWithGeoCoord(location.getLatitude(), location.getLongitude()));
+                    marker.setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
+                    marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+                    mapView.setMapCenterPoint(marker.getMapPoint(), true);
+                    mapView.addPOIItem(marker);
+                    mapView.setZoomLevel(1,true);
             }
         }
     };

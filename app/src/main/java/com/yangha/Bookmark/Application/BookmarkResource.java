@@ -11,17 +11,19 @@ import com.yangha.Bookmark.util.DBHelperManager;
  * Created by pjoo on 2017. 2. 25..
  */
 
-public class BookmarkResource extends Application{
+public class BookmarkResource extends Application {
     private String TAG = getClass().getName();
     private DBHelperManager mDbHelperManager;
     private static BookmarkResource resource;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        mDbHelperManager = new DBHelperManager(this, "BookmarkDB",null,1,mDbHandler);
+        mDbHelperManager = new DBHelperManager(this, "BookmarkDB", null, 1, mDbHandler);
         resource = this;
     }
-    DatabaseErrorHandler mDbHandler = new DatabaseErrorHandler(){
+
+    DatabaseErrorHandler mDbHandler = new DatabaseErrorHandler() {
 
         @Override
         public void onCorruption(SQLiteDatabase sqLiteDatabase) {
@@ -29,10 +31,11 @@ public class BookmarkResource extends Application{
         }
     };
 
-    public DBHelperManager getDBHelperManager(){
+    public DBHelperManager getDBHelperManager() {
         return mDbHelperManager;
     }
-    public static BookmarkResource getInstance(){
+
+    public static BookmarkResource getInstance() {
         return resource;
     }
 }

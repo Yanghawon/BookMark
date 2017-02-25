@@ -11,4 +11,10 @@ public class ListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        relayout(RELAYOUT_MAINACTIVITY);
+    }
 }
