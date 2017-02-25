@@ -47,7 +47,8 @@
                 android:background="@color/fabPressed" />
 
             <!-- 스피너로 바꿔야함 -->
-            <EditText
+            <Spinner
+                android:id="@+id/add_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="20dp"

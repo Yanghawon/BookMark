@@ -14,10 +14,12 @@ import com.yangha.Bookmark.util.DBHelperManager;
 public class BookmarkResource extends Application{
     private String TAG = getClass().getName();
     private DBHelperManager mDbHelperManager;
+    private static BookmarkResource resource;
     @Override
     public void onCreate() {
         super.onCreate();
         mDbHelperManager = new DBHelperManager(this, "BookmarkDB",null,1,mDbHandler);
+        resource = this;
     }
     DatabaseErrorHandler mDbHandler = new DatabaseErrorHandler(){
 
@@ -30,5 +32,7 @@ public class BookmarkResource extends Application{
     public DBHelperManager getDBHelperManager(){
         return mDbHelperManager;
     }
-
+    public static BookmarkResource getInstance(){
+        return resource;
+    }
 }
