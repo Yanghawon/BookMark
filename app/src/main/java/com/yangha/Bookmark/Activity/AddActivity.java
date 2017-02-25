@@ -36,7 +36,7 @@ public class AddActivity extends BaseActivity {
                     Log.i(getLocalClassName(), latitude + "," + longitude);
                 } else {
                     // GPS 를 사용할수 없으므로
-                    intro.showSettingsAlert();
+                    // intro.showSettingsAlert();
                 }
             }
         });

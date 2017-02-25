@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 public class BaseActivity extends AppCompatActivity {
     public static final int RELAYOUT_LISTACTIVITY = 1;
     public static final int RELAYOUT_ADDACTIVITY = 2;
+    public static final int RELAYOUT_MAINACTIVITY = 3;
     public void relayout(int a){
         Intent intent = null;
         switch (a){
@@ -19,6 +20,9 @@ public class BaseActivity extends AppCompatActivity {
                 break;
             case RELAYOUT_ADDACTIVITY:
                 intent = new Intent(BaseActivity.this,AddActivity.class);
+                break;
+            case RELAYOUT_MAINACTIVITY:
+                intent = new Intent(BaseActivity.this,MainActivity.class);
                 break;
         }
         startActivity(intent);
