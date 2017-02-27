@@ -1,5 +1,6 @@
 package com.yangha.Bookmark.Activity;
 
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import com.melnykov.fab.FloatingActionButton;
 import com.yangha.Bookmark.R;
 import com.yangha.Bookmark.util.GpsInfo;
 
+import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
@@ -39,6 +41,25 @@ public class MainActivity extends BaseActivity implements LocationListener {
 
         ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
         mapViewContainer.addView(mapView);
+
+        //
+        MapCircle circle1 = new MapCircle(
+                MapPoint.mapPointWithGeoCoord(gps.getLatitude(), gps.getLongitude()), // center
+                100, // radius
+                Color.argb(40, 0, 0, 0), // strokeColor
+                Color.argb(0, 0, 0, 0) // fillColor
+        );
+        circle1.setTag(100);
+        mapView.addCircle(circle1);
+
+        MapCircle circle2 = new MapCircle(
+                MapPoint.mapPointWithGeoCoord(gps.getLatitude(), gps.getLongitude()), // center
+                200, // radius
+                Color.argb(40, 0, 0, 0), // strokeColor
+                Color.argb(0, 0, 0, 0) // fillColor
+        );
+        circle2.setTag(200);
+        mapView.addCircle(circle2);
 
 
         mapView.setMapViewEventListener(new MapView.MapViewEventListener() {
@@ -154,14 +175,14 @@ public class MainActivity extends BaseActivity implements LocationListener {
                 case 1:
                     Location location = (Location)msg.obj;
                     MapPOIItem marker = new MapPOIItem();
-                    marker.setItemName("Default Marker");
+                    marker.setItemName("Test Marker");
                     marker.setTag(0);
                     marker.setMapPoint(MapPoint.mapPointWithGeoCoord(location.getLatitude(), location.getLongitude()));
                     marker.setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
                     marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
                     mapView.setMapCenterPoint(marker.getMapPoint(), true);
                     mapView.addPOIItem(marker);
-                    mapView.setZoomLevel(1,true);
+                    mapView.setZoomLevel(0,true);
             }
         }
     };
