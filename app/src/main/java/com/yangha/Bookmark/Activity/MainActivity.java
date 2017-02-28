@@ -42,12 +42,12 @@ public class MainActivity extends BaseActivity implements LocationListener {
         ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
         mapViewContainer.addView(mapView);
 
-        //
+        // gps기준 서클 설정
         MapCircle circle1 = new MapCircle(
                 MapPoint.mapPointWithGeoCoord(gps.getLatitude(), gps.getLongitude()), // center
                 100, // radius
-                Color.argb(40, 0, 0, 0), // strokeColor
-                Color.argb(0, 0, 0, 0) // fillColor
+                Color.argb(40, 0, 0, 0), // 원의 색상
+                Color.argb(0, 0, 0, 0) // 원 안의 색상
         );
         circle1.setTag(100);
         mapView.addCircle(circle1);
