@@ -17,7 +17,9 @@ public class DtoBookmark {
     private String remark;
     private String date;
     private int count;
-
+    private double distance;
+    private int dateGap;
+    public DtoBookmark(){}
     public DtoBookmark(int category, String content, int count, String date, String image, int index, Double latitude, Double longitude, float rating, String remark, String title) {
         this.category = category;
         this.content = content;
@@ -119,5 +121,21 @@ public class DtoBookmark {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDateGap(int dateGap) {
+        this.dateGap = dateGap;
+    }
+
+    public int getDateGap() {
+        return dateGap;
     }
 }

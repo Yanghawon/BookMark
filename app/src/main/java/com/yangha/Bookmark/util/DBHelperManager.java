@@ -9,15 +9,20 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.yangha.Bookmark.Dto.DtoBookmark;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by pjoo on 2017. 2. 25..
  */
 
 public class DBHelperManager extends SQLiteOpenHelper {
-    DtoBookmark mDto;
-
+    private DtoBookmark mDto = new DtoBookmark();
+    public double lat1;
+    public double lon1;
+    private String parsingDate = "yyyy-MM-dd_hh_mm_ss";
     public DBHelperManager(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
         super(context, name, factory, version, errorHandler);
     }
@@ -78,7 +83,7 @@ public class DBHelperManager extends SQLiteOpenHelper {
         contentValues.put("b_content", content);
         contentValues.put("b_rating", rating);
         contentValues.put("b_remark", "0");
-
+        contentValues.put("b_date", new SimpleDateFormat(parsingDate).format(new Date()));
         getWritableDatabase().insert("BookMark", null, contentValues);
     }
 
@@ -115,13 +120,14 @@ public class DBHelperManager extends SQLiteOpenHelper {
      */
     public ArrayList<DtoBookmark> selectBookMarkDataAll(int sort, double longitude, double latitude) {
         //"가나다 순", "거리 순", "최신 순", "별점 순", "조회 순"
-        String sql = null;
+        lat1 = latitude;
+        lon1 = longitude;
+        String sql = "select * from BookMark order by b_title asc;";
         switch (sort) {
-            case 0:
-                sql = "select * from BookMark order by b_title asc;";
-                break;
-            case 1:
-                sql = "select * from BookMark order by ABS(b_longitude-"+longitude+";";
+            case 3:
+                sql = "select * from BookMark order by b_rating asc;";
+            case 4:
+                sql = "select * from BookMark order by b_count asc;";
         }
 
         Cursor results = getReadableDatabase().rawQuery(sql, null);
@@ -141,9 +147,55 @@ public class DBHelperManager extends SQLiteOpenHelper {
             mDto.setRating(results.getFloat(results.getColumnIndex("b_rating")));
             mDto.setDate(results.getString(results.getColumnIndex("b_date")));
             mDto.setCount(results.getInt(results.getColumnIndex("b_count")));
-
+            if(sort ==1){
+                double distance = calDistance(mDto.getLatitude(), mDto.getLongitude());
+                mDto.setDistance(distance);
+            } else if (sort == 2) {
+                try {
+                    mDto.setDateGap(new SimpleDateFormat(parsingDate).parse(mDto.getDate()).compareTo(new Date()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
             list.add(mDto);
         }
+
+        if(sort ==1){
+            for(int i=0;i<list.size();i++){
+                for (int j=i+1;j<list.size();j++){
+
+                }
+            }
+        }else if(sort==2){
+
+        }
         return list;
+    }
+
+
+    public double calDistance(double lat2, double lon2){
+
+        double theta, dist;
+        theta = lon1 - lon2;
+        dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1))
+                * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+
+        dist = dist * 60 * 1.1515;
+        dist = dist * 1.609344;    // 단위 mile 에서 km 변환.
+        dist = dist * 1000.0;      // 단위  km 에서 m 로 변환
+
+        return dist;
+    }
+
+    // 주어진 도(degree) 값을 라디언으로 변환
+    private double deg2rad(double deg){
+        return (double)(deg * Math.PI / (double)180d);
+    }
+
+    // 주어진 라디언(radian) 값을 도(degree) 값으로 변환
+    private double rad2deg(double rad){
+        return (double)(rad * (double)180d / Math.PI);
     }
 }
