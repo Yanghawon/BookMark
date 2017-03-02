@@ -16,6 +16,8 @@ import java.util.ArrayList;
  */
 
 public class DBHelperManager extends SQLiteOpenHelper {
+    DtoBookmark mDto;
+
     public DBHelperManager(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
         super(context, name, factory, version, errorHandler);
     }
@@ -81,23 +83,67 @@ public class DBHelperManager extends SQLiteOpenHelper {
     }
 
     /**
-     * BoomMark 데이터 Select 메서드
+     * BoomMark DB 데이터 Select 메서드
      *
      * @param num
      * @return
      */
     public DtoBookmark selectBookMarkData(int num) {
-        //Cursor cursor = getReadableDatabase().query("Category", new String[]{"c_title"}, null, null, null, null, null);
-
         String sql = "select * from BookMark where b_index = " + num + ";";
         Cursor result = getReadableDatabase().rawQuery(sql, null);
-        DtoBookmark dto;
 
         // result(Cursor 객체)가 비어 있으면 false 리턴
         if (result.moveToFirst()) {
-            int id = result.getInt(0);
-            String voca = result.getString(1);
+            mDto.setIndex(num);
+            mDto.setLongitude(result.getDouble(result.getColumnIndex("b_longitude")));
+            mDto.setLatitude(result.getDouble(result.getColumnIndex("b_latitude")));
+            mDto.setTitle(result.getString(result.getColumnIndex("b_title")));
+            mDto.setImage(result.getString(result.getColumnIndex("b_image")));
+            mDto.setCategory(result.getInt(result.getColumnIndex("b_category")));
+            mDto.setContent(result.getString(result.getColumnIndex("b_content")));
+            mDto.setRating(result.getFloat(result.getColumnIndex("b_rating")));
+            mDto.setDate(result.getString(result.getColumnIndex("b_date")));
+            mDto.setCount(result.getInt(result.getColumnIndex("b_count")));
         }
-        return null;
+        return mDto;
+    }
+
+    /**
+     * BookMark DB 데이터 전체 가져오기
+     *
+     * @return
+     */
+    public ArrayList<DtoBookmark> selectBookMarkDataAll(int sort, double longitude, double latitude) {
+        //"가나다 순", "거리 순", "최신 순", "별점 순", "조회 순"
+        String sql = null;
+        switch (sort) {
+            case 0:
+                sql = "select * from BookMark order by b_title asc;";
+                break;
+            case 1:
+                sql = "select * from BookMark order by ABS(b_longitude-"+longitude+";";
+        }
+
+        Cursor results = getReadableDatabase().rawQuery(sql, null);
+
+        ArrayList<DtoBookmark> list = new ArrayList<DtoBookmark>();
+
+        results.moveToFirst();
+
+        while (results.isAfterLast()) {
+            mDto.setIndex(results.getInt(results.getColumnIndex("b_index")));
+            mDto.setLongitude(results.getDouble(results.getColumnIndex("b_longitude")));
+            mDto.setLatitude(results.getDouble(results.getColumnIndex("b_latitude")));
+            mDto.setTitle(results.getString(results.getColumnIndex("b_title")));
+            mDto.setImage(results.getString(results.getColumnIndex("b_image")));
+            mDto.setCategory(results.getInt(results.getColumnIndex("b_category")));
+            mDto.setContent(results.getString(results.getColumnIndex("b_content")));
+            mDto.setRating(results.getFloat(results.getColumnIndex("b_rating")));
+            mDto.setDate(results.getString(results.getColumnIndex("b_date")));
+            mDto.setCount(results.getInt(results.getColumnIndex("b_count")));
+
+            list.add(mDto);
+        }
+        return list;
     }
 }

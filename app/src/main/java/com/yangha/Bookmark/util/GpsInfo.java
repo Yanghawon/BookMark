@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 
 import com.yangha.Bookmark.Activity.AddActivity;
 import com.yangha.Bookmark.Activity.BaseActivity;
+import com.yangha.Bookmark.Activity.ListActivity;
 import com.yangha.Bookmark.Activity.MainActivity;
 
 public class GpsInfo extends Service {
@@ -38,6 +39,8 @@ public class GpsInfo extends Service {
             this.mListner = (MainActivity)context;
         }else if(context instanceof AddActivity){
             this.mListner = (AddActivity)context;
+        }else if(context instanceof ListActivity){
+            this.mListner = (ListActivity)context;
         }
         getLocation();
     }

@@ -48,7 +48,6 @@ public class AddActivity extends BaseActivity implements LocationListener {
 
             @Override
             public void onClick(View v) {
-                //insertData(SQLiteDatabase db, double longitude, double latitude, String title, String image, int category, String content, float rating, String remark)
                 BookmarkResource.getInstance().getDBHelperManager().insertData(
                         gps.getLongitude(), gps.getLatitude(), title.getText().toString(), "image", category.getSelectedItemPosition(), content.getText().toString(), rating.getRating(), "0");
                 Toast.makeText(getApplicationContext(), "데이터가 입력되었습니다.", Toast.LENGTH_SHORT).show();
@@ -64,24 +63,16 @@ public class AddActivity extends BaseActivity implements LocationListener {
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-
-    }
+    public void onLocationChanged(Location location) {}
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
 
     @Override
-    public void onProviderEnabled(String provider) {
-
-    }
+    public void onProviderEnabled(String provider) {}
 
     @Override
-    public void onProviderDisabled(String provider) {
-
-    }
+    public void onProviderDisabled(String provider) {}
 
     private class CategoryAdapter extends BaseAdapter {
         private ArrayList<String> list;

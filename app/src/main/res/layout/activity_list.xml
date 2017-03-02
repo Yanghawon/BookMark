@@ -1,56 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="com.android.support.design"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/list_search_edt"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="4"
-            android:src="@drawable/noimage"/>
+            android:hint="search data"
+            />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.melnykov.fab.FloatingActionButton
+            android:id="@+id/list_search_btn"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="6"
-            android:orientation="vertical">
+            android:src="@drawable/ic_search_black_24dp"
+            fab:backgroundTint="@color/colorPrimary"
+            fab:fabSize="mini"
+            fab:rippleColor="@color/colorPrimaryDark" />
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"
-                android:background="@color/fabPressed"/>
+        <Spinner
+            android:id="@+id/list_search_sort_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
 
-            <!-- 스피너로 바꿔야함 -->
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"
-                android:background="@color/fabPressed"/>
-        </LinearLayout>
+        </Spinner>
+
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="5"
-        android:background="@color/colorPrimary">
+        android:layout_height="match_parent">
 
-        <EditText
+        <ListView
+            android:id="@+id/list_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="20dp"
-            android:background="@color/fabRipple" />
+            android:layout_height="match_parent"></ListView>
     </LinearLayout>
+
 </LinearLayout>

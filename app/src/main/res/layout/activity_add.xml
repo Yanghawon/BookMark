@@ -48,7 +48,6 @@
                 android:layout_weight="1"
                 android:background="@color/fabPressed" />
 
-            <!-- 스피너로 바꿔야함 -->
             <Spinner
                 android:id="@+id/add_spinner"
                 android:layout_width="match_parent"

@@ -5,7 +5,9 @@ package com.yangha.Bookmark.Dto;
  */
 
 public class DtoBookmark {
-    private Double doubleitude;
+
+    private int index;
+    private Double longitude;
     private Double latitude;
     private String title;
     private String image;
@@ -13,16 +15,38 @@ public class DtoBookmark {
     private String content;
     private float rating;
     private String remark;
+    private String date;
+    private int count;
 
-    public DtoBookmark(int category, String content, String image, double latitude, double doubleitude, float rating, String remark, String title) {
+    public DtoBookmark(int category, String content, int count, String date, String image, int index, Double latitude, Double longitude, float rating, String remark, String title) {
         this.category = category;
         this.content = content;
+        this.count = count;
+        this.date = date;
         this.image = image;
+        this.index = index;
         this.latitude = latitude;
-        this.doubleitude = doubleitude;
+        this.longitude = longitude;
         this.rating = rating;
         this.remark = remark;
         this.title = title;
+    }
+
+    public int getCount() {
+
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public int getCategory() {
@@ -49,20 +73,28 @@ public class DtoBookmark {
         this.image = image;
     }
 
-    public double getLatitude() {
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public double getdoubleitude() {
-        return doubleitude;
+    public Double getLongitude() {
+        return longitude;
     }
 
-    public void setdoubleitude(double doubleitude) {
-        this.doubleitude = doubleitude;
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public float getRating() {
