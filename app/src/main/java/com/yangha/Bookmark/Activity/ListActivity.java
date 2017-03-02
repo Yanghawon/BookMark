@@ -39,17 +39,20 @@ public class ListActivity extends BaseActivity implements LocationListener{
         listview = (ListView) findViewById(R.id.list_view);
         sort_spinner = (Spinner) findViewById(R.id.list_search_sort_spinner);
         listview.setAdapter(new ViewAdapter(BookmarkResource.getInstance().getDBHelperManager().selectBookMarkDataAll(sort_spinner.getId(),gps.getLongitude(),gps.getLatitude())));
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_item, search_spinner_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, search_spinner_item);
         sort_spinner.setAdapter(adapter);
-
-        sort_spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        sort_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //리스트별 정렬
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 ((ViewAdapter)listview.getAdapter()).setList(
                         BookmarkResource.getInstance().getDBHelperManager().
-                                selectBookMarkDataAll(position,gps.getLongitude(),gps.getLatitude()));
+                                selectBookMarkDataAll(i,gps.getLongitude(),gps.getLatitude()));
                 ((ViewAdapter)listview.getAdapter()).notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
 

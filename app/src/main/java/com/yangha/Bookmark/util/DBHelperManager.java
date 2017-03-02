@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.yangha.Bookmark.Dto.DtoBookmark;
 
@@ -84,7 +85,7 @@ public class DBHelperManager extends SQLiteOpenHelper {
         contentValues.put("b_rating", rating);
         contentValues.put("b_remark", "0");
         contentValues.put("b_date", new SimpleDateFormat(parsingDate).format(new Date()));
-        getWritableDatabase().insert("BookMark", null, contentValues);
+        Log.i(getClass().getName(),"insert data : "+getWritableDatabase().insert("BookMark", null, contentValues));
     }
 
     /**
@@ -129,14 +130,15 @@ public class DBHelperManager extends SQLiteOpenHelper {
             case 4:
                 sql = "select * from BookMark order by b_count asc;";
         }
-
-        Cursor results = getReadableDatabase().rawQuery(sql, null);
+        Cursor results = getReadableDatabase().query("BookMark",null,null,null,null,null,null);
+//        getReadableDatabase().rawQuery(sql, null);
 
         ArrayList<DtoBookmark> list = new ArrayList<DtoBookmark>();
 
         results.moveToFirst();
 
-        while (results.isAfterLast()) {
+        while (results.moveToNext()) {
+            DtoBookmark mDto = new DtoBookmark();
             mDto.setIndex(results.getInt(results.getColumnIndex("b_index")));
             mDto.setLongitude(results.getDouble(results.getColumnIndex("b_longitude")));
             mDto.setLatitude(results.getDouble(results.getColumnIndex("b_latitude")));
@@ -169,6 +171,8 @@ public class DBHelperManager extends SQLiteOpenHelper {
         }else if(sort==2){
 
         }
+
+        Log.i(getClass().getName(), "list "+list.size());
         return list;
     }
 
