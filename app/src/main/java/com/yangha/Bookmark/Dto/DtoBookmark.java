@@ -19,7 +19,10 @@ public class DtoBookmark {
     private int count;
     private double distance;
     private int dateGap;
-    public DtoBookmark(){}
+
+    public DtoBookmark() {
+    }
+
     public DtoBookmark(int category, String content, int count, String date, String image, int index, Double latitude, Double longitude, float rating, String remark, String title) {
         this.category = category;
         this.content = content;

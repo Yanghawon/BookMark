@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.yangha.Bookmark.Dto.DtoBookmark;
 
@@ -22,7 +23,10 @@ public class DBHelperManager extends SQLiteOpenHelper {
     private DtoBookmark mDto = new DtoBookmark();
     public double lat1;
     public double lon1;
-    private String parsingDate = "yyyy-MM-dd_hh_mm_ss";
+    private DtoBookmark temp;
+    private String parsingDate = "yyyy년MM월dd일 HH시mm분";
+    private SimpleDateFormat sdf;
+
     public DBHelperManager(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
         super(context, name, factory, version, errorHandler);
     }
@@ -84,7 +88,7 @@ public class DBHelperManager extends SQLiteOpenHelper {
         contentValues.put("b_rating", rating);
         contentValues.put("b_remark", "0");
         contentValues.put("b_date", new SimpleDateFormat(parsingDate).format(new Date()));
-        getWritableDatabase().insert("BookMark", null, contentValues);
+        Log.i(getClass().getName(), "insert data : " + getWritableDatabase().insert("BookMark", null, contentValues));
     }
 
     /**
@@ -123,20 +127,24 @@ public class DBHelperManager extends SQLiteOpenHelper {
         lat1 = latitude;
         lon1 = longitude;
         String sql = "select * from BookMark order by b_title asc;";
+        Log.i(getDatabaseName(),"aaa"+sort);
         switch (sort) {
             case 3:
                 sql = "select * from BookMark order by b_rating asc;";
+                break;
             case 4:
                 sql = "select * from BookMark order by b_count asc;";
+                break;
         }
-
+        //Cursor results = getReadableDatabase().query("BookMark", null, null, null, null, null, null);
         Cursor results = getReadableDatabase().rawQuery(sql, null);
 
         ArrayList<DtoBookmark> list = new ArrayList<DtoBookmark>();
 
         results.moveToFirst();
 
-        while (results.isAfterLast()) {
+        while (results.moveToNext()) {
+            DtoBookmark mDto = new DtoBookmark();
             mDto.setIndex(results.getInt(results.getColumnIndex("b_index")));
             mDto.setLongitude(results.getDouble(results.getColumnIndex("b_longitude")));
             mDto.setLatitude(results.getDouble(results.getColumnIndex("b_latitude")));
@@ -147,12 +155,24 @@ public class DBHelperManager extends SQLiteOpenHelper {
             mDto.setRating(results.getFloat(results.getColumnIndex("b_rating")));
             mDto.setDate(results.getString(results.getColumnIndex("b_date")));
             mDto.setCount(results.getInt(results.getColumnIndex("b_count")));
-            if(sort ==1){
+            Log.i(getDatabaseName(),"bbb"+sort);
+            if (sort == 1) {
+                Log.i(getDatabaseName(),"ccc"+sort);
                 double distance = calDistance(mDto.getLatitude(), mDto.getLongitude());
                 mDto.setDistance(distance);
+                Log.i(getDatabaseName(),"ddd"+sort);
             } else if (sort == 2) {
                 try {
-                    mDto.setDateGap(new SimpleDateFormat(parsingDate).parse(mDto.getDate()).compareTo(new Date()));
+                    // 날짜 계산 문제
+                    Log.i(getDatabaseName(),"ccc"+sort);
+                    mDto.setDateGap(sdf.parse(sdf.format(new Date())).compareTo((sdf.parse(mDto.getDate()))));
+                    Log.i(getDatabaseName(),mDto.getDateGap()+"jjj");
+                    Log.i(getDatabaseName(),mDto.getDate()+"kkk");
+                    Log.i(getDatabaseName(),new SimpleDateFormat(parsingDate).parse(mDto.getDate())+"lll");
+                    Log.i(getDatabaseName(),new Date()+"lll");
+                    Log.i(getDatabaseName(),sdf.parse(sdf.format(new Date())).compareTo((sdf.parse(mDto.getDate())))+"lll");
+                    Log.i(getDatabaseName(),mDto.getTitle()+"");
+                    Log.i(getDatabaseName(),"ddd"+sort);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -160,20 +180,33 @@ public class DBHelperManager extends SQLiteOpenHelper {
             list.add(mDto);
         }
 
-        if(sort ==1){
-            for(int i=0;i<list.size();i++){
-                for (int j=i+1;j<list.size();j++){
-
+        if (sort == 1) {
+            for (int i = 0; i < list.size() - 1; i++) {
+                for (int j = 0; j < list.size() - 1 - i; j++) {
+                    if (list.get(i).getDistance() > list.get(j + 1).getDistance()) {
+                        temp = list.get(j);
+                        list.set(j,list.get(j+1));
+                        list.set(j+1,temp);
+                    }
                 }
             }
-        }else if(sort==2){
-
+        }
+        // 최신순 정렬
+        else if (sort == 2) {
+            for (int i = 0; i < list.size() - 1; i++) {
+                for (int j = 0; j < list.size() - 1 - i; j++) {
+                    if (list.get(i).getDateGap() > list.get(j + 1).getDateGap()) {
+                        temp = list.get(j);
+                        list.set(j,list.get(j+1));
+                        list.set(j+1,temp);
+                    }
+                }
+            }
         }
         return list;
     }
 
-
-    public double calDistance(double lat2, double lon2){
+    public double calDistance(double lat2, double lon2) {
 
         double theta, dist;
         theta = lon1 - lon2;
@@ -190,12 +223,12 @@ public class DBHelperManager extends SQLiteOpenHelper {
     }
 
     // 주어진 도(degree) 값을 라디언으로 변환
-    private double deg2rad(double deg){
-        return (double)(deg * Math.PI / (double)180d);
+    private double deg2rad(double deg) {
+        return (double) (deg * Math.PI / (double) 180d);
     }
 
     // 주어진 라디언(radian) 값을 도(degree) 값으로 변환
-    private double rad2deg(double rad){
-        return (double)(rad * (double)180d / Math.PI);
+    private double rad2deg(double rad) {
+        return (double) (rad * (double) 180d / Math.PI);
     }
 }
