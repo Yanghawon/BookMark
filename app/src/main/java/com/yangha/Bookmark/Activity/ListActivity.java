@@ -27,13 +27,13 @@ public class ListActivity extends BaseActivity implements LocationListener {
     private String[] search_spinner_item = {"가나다 순", "거리 순", "최신 순", "별점 순", "조회 순"};
     private Spinner sort_spinner;
     private ListView listview;
-    GpsInfo gps = new GpsInfo(this);
+    GpsInfo gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-
+        gps= new GpsInfo(this);
         FloatingActionButton search_btn = (FloatingActionButton) findViewById(R.id.list_search_btn);
         final EditText search_edt = (EditText) findViewById(R.id.list_search_edt);
         listview = (ListView) findViewById(R.id.list_view);

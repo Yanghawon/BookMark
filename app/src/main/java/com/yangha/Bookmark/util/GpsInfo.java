@@ -29,7 +29,7 @@ public class GpsInfo extends Service {
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
 
     // 최소 GPS 정보 업데이트 시간 밀리세컨이므로 5초
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 5 * 1;
+    private static final long MIN_TIME_BW_UPDATES = 1000;
 
     protected LocationManager locationManager;
 

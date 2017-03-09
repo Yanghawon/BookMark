@@ -21,6 +21,7 @@ import java.util.Date;
  */
 
 public class DBHelperManager extends SQLiteOpenHelper {
+    private final String TAG =getClass().getName();
     private DtoBookmark mDto = new DtoBookmark();
     public double lat1;
     public double lon1;
@@ -89,7 +90,7 @@ public class DBHelperManager extends SQLiteOpenHelper {
         contentValues.put("b_remark", "0");
         contentValues.put("b_date", new SimpleDateFormat(parsingDate).format(new Date()));
 
-        getWritableDatabase().insert("BookMark", null, contentValues);
+        Log.i(TAG, "insert data :"+getWritableDatabase().insert("BookMark", null, contentValues));
     }
 
     /**
@@ -141,8 +142,6 @@ public class DBHelperManager extends SQLiteOpenHelper {
 
         ArrayList<DtoBookmark> list = new ArrayList<DtoBookmark>();
 
-        results.moveToFirst();
-
         while (results.moveToNext()) {
             DtoBookmark dto = new DtoBookmark();
             dto.setIndex(results.getInt(results.getColumnIndex("b_index")));
@@ -168,31 +167,17 @@ public class DBHelperManager extends SQLiteOpenHelper {
             list.add(dto);
         }
 
-        if (sort == 1) {
-            for (int i = 0; i < list.size() - 1; i++) {
-                for (int j = 0; j < list.size() - 1 - i; j++) {
-                    if (list.get(i).getDistance() > list.get(j + 1).getDistance()) {
-                        temp = list.get(j);
-                        list.set(j, list.get(j + 1));
-                        list.set(j + 1, temp);
-                    }
-                }
-            }
-        }
-        // 최신순 정렬
-        else if (sort == 2) {
-            for (int i = 0; i < list.size() - 1; i++) {
-                for (int j = 0; j < list.size() - 1 - i; j++) {
-                    if (list.get(i).getDateGap() > list.get(j + 1).getDateGap()) {
-                        temp = list.get(j);
-                        list.set(j, list.get(j + 1));
-                        list.set(j + 1, temp);
-                    }
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = i+1; j < list.size(); j++) {
+                if((sort==1 && list.get(i).getDistance() > list.get(j).getDistance())||
+                        (sort==2 && list.get(i).getDateGap() > list.get(j).getDateGap())){
+                    temp = list.get(j);
+                    list.set(j, list.get(i));
+                    list.set(i, temp);
                 }
             }
         }
         Log.i(getDatabaseName(), "" + list.size());
-        ;
         return list;
     }
 

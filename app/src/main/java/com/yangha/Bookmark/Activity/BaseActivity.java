@@ -1,16 +1,20 @@
 package com.yangha.Bookmark.Activity;
 
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Window;
 
 /**
  * Created by pjoo on 2017. 2. 25..
  */
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity implements LocationListener{
+    public final String TAG = getClass().getName();
     /**
      * ListActivity로 이동 
      * */
@@ -59,5 +63,25 @@ public class BaseActivity extends AppCompatActivity {
         }
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.i(TAG,"current onLocationChanged");
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+        Log.i(TAG,"current onStatusChanged");
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+        Log.i(TAG,"current onProviderEnabled");
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+        Log.i(TAG,"current onProviderDisabled");
     }
 }
