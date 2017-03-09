@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -21,16 +20,16 @@
                 android:id="@+id/add_photo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/noimage"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:src="@drawable/noimage" />
 
             <Button
                 android:id="@+id/add_photo_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_gravity="center"
                 android:layout_weight="6"
-                android:text="사진 추가/변경"
-                android:layout_gravity="center"/>
+                android:text="사진 추가/변경" />
         </LinearLayout>
 
         <LinearLayout
@@ -72,6 +71,7 @@
             android:layout_margin="20dp"
             android:background="@color/fabRipple" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -82,20 +82,22 @@
             android:id="@+id/add_ratingbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
             android:isIndicator="false"
+            android:max="5"
             android:numStars="5"
             android:rating="2.5"
-            android:stepSize="0.5"
-            android:max="5"
-            android:layout_gravity="center"
-            android:layout_weight="1"/>
-        <Button
+            android:stepSize="0.5" />
+
+        <com.melnykov.fab.FloatingActionButton
             android:id="@+id/add_list_btn"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
             android:layout_gravity="right"
-            android:layout_weight="3"
             android:layout_marginBottom="10dp"
-            android:text="추가" />
+            android:layout_weight="3"
+            android:src="@drawable/ic_add_black_24dp"
+            />
     </LinearLayout>
 </LinearLayout>

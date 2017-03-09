@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 import android.util.Log;
 
 import com.yangha.Bookmark.Dto.DtoBookmark;
@@ -24,8 +25,7 @@ public class DBHelperManager extends SQLiteOpenHelper {
     public double lat1;
     public double lon1;
     private DtoBookmark temp;
-    private String parsingDate = "yyyy년MM월dd일 HH시mm분";
-    private SimpleDateFormat sdf;
+    private String parsingDate = "yyyy년MM월dd일 hh시mm분";
 
     public DBHelperManager(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
         super(context, name, factory, version, errorHandler);
@@ -88,7 +88,8 @@ public class DBHelperManager extends SQLiteOpenHelper {
         contentValues.put("b_rating", rating);
         contentValues.put("b_remark", "0");
         contentValues.put("b_date", new SimpleDateFormat(parsingDate).format(new Date()));
-        Log.i(getClass().getName(), "insert data : " + getWritableDatabase().insert("BookMark", null, contentValues));
+
+        getWritableDatabase().insert("BookMark", null, contentValues);
     }
 
     /**
@@ -123,20 +124,19 @@ public class DBHelperManager extends SQLiteOpenHelper {
      * @return
      */
     public ArrayList<DtoBookmark> selectBookMarkDataAll(int sort, double longitude, double latitude) {
-        //"가나다 순", "거리 순", "최신 순", "별점 순", "조회 순"
+        // 데이터가 다 보이지 않음 왜 그럴까
+        // 첫번째 데이터가 보이지 않음
         lat1 = latitude;
         lon1 = longitude;
         String sql = "select * from BookMark order by b_title asc;";
-        Log.i(getDatabaseName(),"aaa"+sort);
         switch (sort) {
             case 3:
-                sql = "select * from BookMark order by b_rating asc;";
+                sql = "select * from BookMark order by b_rating desc;";
                 break;
             case 4:
-                sql = "select * from BookMark order by b_count asc;";
+                sql = "select * from BookMark order by b_count desc;";
                 break;
         }
-        //Cursor results = getReadableDatabase().query("BookMark", null, null, null, null, null, null);
         Cursor results = getReadableDatabase().rawQuery(sql, null);
 
         ArrayList<DtoBookmark> list = new ArrayList<DtoBookmark>();
@@ -144,40 +144,28 @@ public class DBHelperManager extends SQLiteOpenHelper {
         results.moveToFirst();
 
         while (results.moveToNext()) {
-            DtoBookmark mDto = new DtoBookmark();
-            mDto.setIndex(results.getInt(results.getColumnIndex("b_index")));
-            mDto.setLongitude(results.getDouble(results.getColumnIndex("b_longitude")));
-            mDto.setLatitude(results.getDouble(results.getColumnIndex("b_latitude")));
-            mDto.setTitle(results.getString(results.getColumnIndex("b_title")));
-            mDto.setImage(results.getString(results.getColumnIndex("b_image")));
-            mDto.setCategory(results.getInt(results.getColumnIndex("b_category")));
-            mDto.setContent(results.getString(results.getColumnIndex("b_content")));
-            mDto.setRating(results.getFloat(results.getColumnIndex("b_rating")));
-            mDto.setDate(results.getString(results.getColumnIndex("b_date")));
-            mDto.setCount(results.getInt(results.getColumnIndex("b_count")));
-            Log.i(getDatabaseName(),"bbb"+sort);
+            DtoBookmark dto = new DtoBookmark();
+            dto.setIndex(results.getInt(results.getColumnIndex("b_index")));
+            dto.setLongitude(results.getDouble(results.getColumnIndex("b_longitude")));
+            dto.setLatitude(results.getDouble(results.getColumnIndex("b_latitude")));
+            dto.setTitle(results.getString(results.getColumnIndex("b_title")));
+            dto.setImage(results.getString(results.getColumnIndex("b_image")));
+            dto.setCategory(results.getInt(results.getColumnIndex("b_category")));
+            dto.setContent(results.getString(results.getColumnIndex("b_content")));
+            dto.setRating(results.getFloat(results.getColumnIndex("b_rating")));
+            dto.setDate(results.getString(results.getColumnIndex("b_date")));
+            dto.setCount(results.getInt(results.getColumnIndex("b_count")));
             if (sort == 1) {
-                Log.i(getDatabaseName(),"ccc"+sort);
-                double distance = calDistance(mDto.getLatitude(), mDto.getLongitude());
-                mDto.setDistance(distance);
-                Log.i(getDatabaseName(),"ddd"+sort);
+                double distance = calcDistance(lat1, lon1, dto.getLatitude(), dto.getLongitude());
+                dto.setDistance(distance);
             } else if (sort == 2) {
                 try {
-                    // 날짜 계산 문제
-                    Log.i(getDatabaseName(),"ccc"+sort);
-                    mDto.setDateGap(sdf.parse(sdf.format(new Date())).compareTo((sdf.parse(mDto.getDate()))));
-                    Log.i(getDatabaseName(),mDto.getDateGap()+"jjj");
-                    Log.i(getDatabaseName(),mDto.getDate()+"kkk");
-                    Log.i(getDatabaseName(),new SimpleDateFormat(parsingDate).parse(mDto.getDate())+"lll");
-                    Log.i(getDatabaseName(),new Date()+"lll");
-                    Log.i(getDatabaseName(),sdf.parse(sdf.format(new Date())).compareTo((sdf.parse(mDto.getDate())))+"lll");
-                    Log.i(getDatabaseName(),mDto.getTitle()+"");
-                    Log.i(getDatabaseName(),"ddd"+sort);
+                    dto.setDateGap((new SimpleDateFormat(parsingDate).parse(new SimpleDateFormat(parsingDate).format(new Date())).getTime() - new SimpleDateFormat(parsingDate).parse(dto.getDate()).getTime()) / (60 * 1000));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
             }
-            list.add(mDto);
+            list.add(dto);
         }
 
         if (sort == 1) {
@@ -185,8 +173,8 @@ public class DBHelperManager extends SQLiteOpenHelper {
                 for (int j = 0; j < list.size() - 1 - i; j++) {
                     if (list.get(i).getDistance() > list.get(j + 1).getDistance()) {
                         temp = list.get(j);
-                        list.set(j,list.get(j+1));
-                        list.set(j+1,temp);
+                        list.set(j, list.get(j + 1));
+                        list.set(j + 1, temp);
                     }
                 }
             }
@@ -197,31 +185,52 @@ public class DBHelperManager extends SQLiteOpenHelper {
                 for (int j = 0; j < list.size() - 1 - i; j++) {
                     if (list.get(i).getDateGap() > list.get(j + 1).getDateGap()) {
                         temp = list.get(j);
-                        list.set(j,list.get(j+1));
-                        list.set(j+1,temp);
+                        list.set(j, list.get(j + 1));
+                        list.set(j + 1, temp);
                     }
                 }
             }
         }
+        Log.i(getDatabaseName(), "" + list.size());
+        ;
         return list;
     }
 
-    public double calDistance(double lat2, double lon2) {
+    //    public double calDistance(double lat2, double lon2) {
+//
+//        double theta, dist;
+//        theta = lon1 - lon2;
+//        dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1))
+//                * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+//        dist = Math.acos(dist);
+//        dist = rad2deg(dist);
+//
+//        dist = dist * 60 * 1.1515;
+//        dist = dist * 1.609344;    // 단위 mile 에서 km 변환.
+//        dist = dist * 1000.0;      // 단위  km 에서 m 로 변환
+//
+//        // return이 이상해
+//        return dist;
+//    }
+    public double calcDistance(double lat1, double lon1, double lat2, double lon2) {
+        double distance;
 
-        double theta, dist;
-        theta = lon1 - lon2;
-        dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1))
-                * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
-        dist = Math.acos(dist);
-        dist = rad2deg(dist);
+        Location locationA = new Location("point A");
 
-        dist = dist * 60 * 1.1515;
-        dist = dist * 1.609344;    // 단위 mile 에서 km 변환.
-        dist = dist * 1000.0;      // 단위  km 에서 m 로 변환
+        locationA.setLatitude(lat1);
+        locationA.setLongitude(lon1);
 
-        return dist;
+        Location locationB = new Location("point B");
+
+        locationB.setLatitude(lat2);
+        locationB.setLongitude(lon2);
+
+        distance = locationA.distanceTo(locationB);
+
+        return distance;
     }
 
+    /*
     // 주어진 도(degree) 값을 라디언으로 변환
     private double deg2rad(double deg) {
         return (double) (deg * Math.PI / (double) 180d);
@@ -230,5 +239,29 @@ public class DBHelperManager extends SQLiteOpenHelper {
     // 주어진 라디언(radian) 값을 도(degree) 값으로 변환
     private double rad2deg(double rad) {
         return (double) (rad * (double) 180d / Math.PI);
+    }
+    */
+    public ArrayList<DtoBookmark> selectBookMarkDataForSearch(String what) {
+        ArrayList<DtoBookmark> list = new ArrayList<DtoBookmark>();
+
+        String sql = "select * from BookMark where b_title like %" + what + "%;";
+        Cursor result = getReadableDatabase().rawQuery(sql, null);
+        while (result.moveToFirst()) {
+            DtoBookmark dto = new DtoBookmark();
+
+            dto.setIndex(result.getInt(result.getColumnIndex("b_index")));
+            dto.setLongitude(result.getDouble(result.getColumnIndex("b_longitude")));
+            dto.setLatitude(result.getDouble(result.getColumnIndex("b_latitude")));
+            dto.setTitle(result.getString(result.getColumnIndex("b_title")));
+            dto.setImage(result.getString(result.getColumnIndex("b_image")));
+            dto.setCategory(result.getInt(result.getColumnIndex("b_category")));
+            dto.setContent(result.getString(result.getColumnIndex("b_content")));
+            dto.setRating(result.getFloat(result.getColumnIndex("b_rating")));
+            dto.setDate(result.getString(result.getColumnIndex("b_date")));
+            dto.setCount(result.getInt(result.getColumnIndex("b_count")));
+
+            list.add(dto);
+        }
+        return list;
     }
 }

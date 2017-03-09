@@ -23,6 +23,10 @@ public class BaseActivity extends AppCompatActivity {
      * MainActivity 로 이동 
      */
     public static final int RELAYOUT_MAINACTIVITY = 3;
+    /**
+     * DetailActivity 로 이동 
+     */
+    public static final int RELAYOUT_DETAILACTIVITY = 4;
 
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
@@ -36,7 +40,7 @@ public class BaseActivity extends AppCompatActivity {
      *  RELAYOUT_ADDACTIVITY = 2;<br> 
      *  RELAYOUT_MAINACTIVITY = 3;<br>
      */
-    public void relayout(int a){
+    public void relayout(int a, int data){
         Intent intent = null;
         switch (a){
             case RELAYOUT_LISTACTIVITY:
@@ -47,6 +51,10 @@ public class BaseActivity extends AppCompatActivity {
                 break;
             case RELAYOUT_MAINACTIVITY:
                 intent = new Intent(BaseActivity.this,MainActivity.class);
+                break;
+            case RELAYOUT_DETAILACTIVITY:
+                intent = new Intent(BaseActivity.this,DetailActivity.class);
+                intent.putExtra("selectedID",data);
                 break;
         }
         startActivity(intent);

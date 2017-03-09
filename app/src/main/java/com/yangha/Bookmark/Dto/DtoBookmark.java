@@ -18,29 +18,12 @@ public class DtoBookmark {
     private String date;
     private int count;
     private double distance;
-    private int dateGap;
+    private long dateGap;
 
     public DtoBookmark() {
     }
 
-    public DtoBookmark(int category, String content, int count, String date, String image, int index, Double latitude, Double longitude, float rating, String remark, String title) {
-        this.category = category;
-        this.content = content;
-        this.count = count;
-        this.date = date;
-        this.image = image;
-        this.index = index;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.rating = rating;
-        this.remark = remark;
-        this.title = title;
-    }
-
-    public int getCount() {
-
-        return count;
-    }
+    public int getCount() { return count; }
 
     public void setCount(int count) {
         this.count = count;
@@ -86,19 +69,19 @@ public class DtoBookmark {
         this.index = index;
     }
 
-    public Double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public Double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
@@ -134,11 +117,11 @@ public class DtoBookmark {
         return distance;
     }
 
-    public void setDateGap(int dateGap) {
+    public void setDateGap(long dateGap) {
         this.dateGap = dateGap;
     }
 
-    public int getDateGap() {
+    public long getDateGap() {
         return dateGap;
     }
 }

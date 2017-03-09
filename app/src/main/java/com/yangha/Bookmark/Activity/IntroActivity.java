@@ -50,7 +50,7 @@ public class IntroActivity extends BaseActivity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 0:
-                    relayout(RELAYOUT_MAINACTIVITY);
+                    relayout(RELAYOUT_MAINACTIVITY,0);
             }
         }
     };

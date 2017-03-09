@@ -23,7 +23,7 @@ import com.yangha.Bookmark.util.GpsInfo;
 
 import java.util.ArrayList;
 
-public class ListActivity extends BaseActivity implements LocationListener{
+public class ListActivity extends BaseActivity implements LocationListener {
     private String[] search_spinner_item = {"가나다 순", "거리 순", "최신 순", "별점 순", "조회 순"};
     private Spinner sort_spinner;
     private ListView listview;
@@ -35,19 +35,19 @@ public class ListActivity extends BaseActivity implements LocationListener{
         setContentView(R.layout.activity_list);
 
         FloatingActionButton search_btn = (FloatingActionButton) findViewById(R.id.list_search_btn);
-        EditText search_edt = (EditText) findViewById(R.id.list_search_edt);
+        final EditText search_edt = (EditText) findViewById(R.id.list_search_edt);
         listview = (ListView) findViewById(R.id.list_view);
         sort_spinner = (Spinner) findViewById(R.id.list_search_sort_spinner);
-        listview.setAdapter(new ViewAdapter(BookmarkResource.getInstance().getDBHelperManager().selectBookMarkDataAll(sort_spinner.getId(),gps.getLongitude(),gps.getLatitude())));
+        listview.setAdapter(new ViewAdapter(BookmarkResource.getInstance().getDBHelperManager().selectBookMarkDataAll(sort_spinner.getId(), gps.getLongitude(), gps.getLatitude())));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, search_spinner_item);
         sort_spinner.setAdapter(adapter);
         sort_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                ((ViewAdapter)listview.getAdapter()).setList(
+                ((ViewAdapter) listview.getAdapter()).setList(
                         BookmarkResource.getInstance().getDBHelperManager().
-                                selectBookMarkDataAll(i,gps.getLongitude(),gps.getLatitude()));
-                ((ViewAdapter)listview.getAdapter()).notifyDataSetChanged();
+                                selectBookMarkDataAll(i, gps.getLongitude(), gps.getLatitude()));
+                ((ViewAdapter) listview.getAdapter()).notifyDataSetChanged();
             }
 
             @Override
@@ -56,26 +56,38 @@ public class ListActivity extends BaseActivity implements LocationListener{
             }
         });
 
+//        search_btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ArrayList<DtoBookmark> list = new ArrayList<DtoBookmark>();
+//                list = BookmarkResource.getInstance().getDBHelperManager().selectBookMarkDataForSearch(search_edt.getText().toString());
+//            }
+//        });
+
 
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        relayout(RELAYOUT_MAINACTIVITY);
+        relayout(RELAYOUT_MAINACTIVITY, 0);
     }
 
     @Override
-    public void onLocationChanged(Location location) {}
+    public void onLocationChanged(Location location) {
+    }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
 
     @Override
-    public void onProviderEnabled(String provider) {}
+    public void onProviderEnabled(String provider) {
+    }
 
     @Override
-    public void onProviderDisabled(String provider) {}
+    public void onProviderDisabled(String provider) {
+    }
 
     public class ViewAdapter extends BaseAdapter {
         private ArrayList<DtoBookmark> list;
@@ -104,34 +116,50 @@ public class ListActivity extends BaseActivity implements LocationListener{
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.list_item, parent, false);
             }
-            TextView tv_title = (TextView) convertView.findViewById(R.id.list_item_title);
+            final TextView tv_title = (TextView) convertView.findViewById(R.id.list_item_title);
             tv_title.setText(list.get(position).getTitle());
             TextView tv_sub = (TextView) convertView.findViewById(R.id.list_item_sub);
-            switch (sort_spinner.getSelectedItemPosition()){
+            switch (sort_spinner.getSelectedItemPosition()) {
                 case 0:
                     tv_sub.setText(list.get(position).getContent());
                     break;
                 case 1:
-                    tv_sub.setText(list.get(position).getDistance()+"");
+                    tv_sub.setText(list.get(position).getDistance() + "m");
                     break;
                 case 2:
-                    tv_sub.setText(list.get(position).getDateGap()+"");
+                    if ((list.get(position).getDateGap() / 60) == 0) {
+                        tv_sub.setText(list.get(position).getDateGap() + "분 전");
+                    } else if ((list.get(position).getDateGap() / 60) < 25) {
+                        tv_sub.setText(list.get(position).getDateGap() / 60 + "시간 전");
+                    } else {
+                        tv_sub.setText(list.get(position).getDateGap() / (60*12*24) + "일 전");
+                    }
                     break;
                 case 3:
-                    tv_sub.setText(list.get(position).getRating()+"");
+                    tv_sub.setText(list.get(position).getRating() + "점");
                     break;
                 case 4:
-                    tv_sub.setText(list.get(position).getCount()+"");
+                    tv_sub.setText(list.get(position).getCount() + "up");
                     break;
             }
+            tv_title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    relayout(RELAYOUT_DETAILACTIVITY, list.get(position).getIndex());
+                }
+            });
+            tv_sub.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    relayout(RELAYOUT_DETAILACTIVITY, list.get(position).getIndex());
+                }
+            });
             return convertView;
         }
     }
-
-
 }

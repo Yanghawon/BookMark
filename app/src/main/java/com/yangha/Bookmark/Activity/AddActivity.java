@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.melnykov.fab.FloatingActionButton;
 import com.yangha.Bookmark.Application.BookmarkResource;
 import com.yangha.Bookmark.R;
 import com.yangha.Bookmark.util.GpsInfo;
@@ -24,7 +25,8 @@ import java.util.ArrayList;
 
 public class AddActivity extends BaseActivity implements LocationListener {
 
-    private Button photoAddBtn, listAddBtn;
+    private FloatingActionButton listAddBtn;
+    private Button photoAddBtn;
     private Spinner spinner;
 
     @Override
@@ -33,7 +35,7 @@ public class AddActivity extends BaseActivity implements LocationListener {
         setContentView(R.layout.activity_add);
 
         photoAddBtn = (Button) findViewById(R.id.add_photo_btn);
-        listAddBtn = (Button) findViewById(R.id.add_list_btn);
+        listAddBtn = (FloatingActionButton) findViewById(R.id.add_list_btn);
         spinner = (Spinner) findViewById(R.id.add_spinner);
 
         spinner.setAdapter(new CategoryAdapter(BookmarkResource.getInstance().getDBHelperManager().selectCategory()));
@@ -51,7 +53,7 @@ public class AddActivity extends BaseActivity implements LocationListener {
                 BookmarkResource.getInstance().getDBHelperManager().insertData(
                         gps.getLongitude(), gps.getLatitude(), title.getText().toString(), "image", category.getSelectedItemPosition(), content.getText().toString(), rating.getRating(), "0");
                 Toast.makeText(getApplicationContext(), "데이터가 입력되었습니다.", Toast.LENGTH_SHORT).show();
-                relayout(RELAYOUT_MAINACTIVITY);
+                relayout(RELAYOUT_MAINACTIVITY,0);
             }
         });
     }
@@ -59,7 +61,7 @@ public class AddActivity extends BaseActivity implements LocationListener {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        relayout(RELAYOUT_MAINACTIVITY);
+        relayout(RELAYOUT_MAINACTIVITY,0);
     }
 
     @Override

@@ -1,15 +1,19 @@
 package com.yangha.Bookmark.Activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.melnykov.fab.FloatingActionButton;
+import com.yangha.Bookmark.Application.BookmarkResource;
 import com.yangha.Bookmark.R;
 import com.yangha.Bookmark.util.GpsInfo;
 
@@ -21,10 +25,11 @@ import net.daum.mf.map.api.MapView;
 public class MainActivity extends BaseActivity implements LocationListener {
 
     private static String API_KEY = "17ab215709e639add24c6b924c031c70";
-    FloatingActionButton fab1;
-    FloatingActionButton fab2;
-    GpsInfo gps;
-    MapView mapView;
+    private FloatingActionButton fab1;
+    private FloatingActionButton fab2;
+    private GpsInfo gps;
+    private MapView mapView;
+    private MapPOIItem marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +70,8 @@ public class MainActivity extends BaseActivity implements LocationListener {
         mapView.setMapViewEventListener(new MapView.MapViewEventListener() {
             @Override
             public void onMapViewInitialized(MapView mapView) {
-                handler.sendMessage(handler.obtainMessage(1,gps.getLocation()));
+                handler.sendMessage(handler.obtainMessage(1, gps.getLocation()));
+                handler.sendMessage(handler.obtainMessage(2));
                 //MapView가 사용가능 한 상태가 되었음을 알려준다.
                 //onMapViewInitialized()가 호출된 이후에 MapView 객체가 제공하는 지도 조작 API들을 사용할 수 있다.
             }
@@ -136,13 +142,13 @@ public class MainActivity extends BaseActivity implements LocationListener {
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                relayout(RELAYOUT_LISTACTIVITY);
+                relayout(RELAYOUT_LISTACTIVITY, 0);
             }
         });
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                relayout(RELAYOUT_ADDACTIVITY);
+                relayout(RELAYOUT_ADDACTIVITY, 0);
             }
         });
     }
@@ -171,19 +177,55 @@ public class MainActivity extends BaseActivity implements LocationListener {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case 1:
-                    Location location = (Location)msg.obj;
-                    MapPOIItem marker = new MapPOIItem();
-                    marker.setItemName("Test Marker");
+                    Location location = (Location) msg.obj;
+                    marker = new MapPOIItem();
+                    marker.setItemName("현재 위치");
                     marker.setTag(0);
                     marker.setMapPoint(MapPoint.mapPointWithGeoCoord(location.getLatitude(), location.getLongitude()));
                     marker.setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
                     marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
                     mapView.setMapCenterPoint(marker.getMapPoint(), true);
                     mapView.addPOIItem(marker);
-                    mapView.setZoomLevel(0,true);
+                    mapView.setZoomLevel(0, true);
+                    break;
+                case 2:
+                    for (int i = 1; BookmarkResource.getInstance().getDBHelperManager().selectBookMarkData(i)==null ; i++) {
+                        marker = new MapPOIItem();
+                        marker.setItemName(BookmarkResource.getInstance().getDBHelperManager().selectBookMarkData(i).getTitle());
+                        Log.i(getLocalClassName(), "aa" + BookmarkResource.getInstance().getDBHelperManager().selectBookMarkData(i).getTitle());
+                        Log.i(getLocalClassName(), "bb" + BookmarkResource.getInstance().getDBHelperManager().selectBookMarkData(i).getLongitude());
+                        Log.i(getLocalClassName(), "cc" + BookmarkResource.getInstance().getDBHelperManager().selectBookMarkData(i).getLatitude());
+                        marker.setTag(1);
+                        marker.setMapPoint(MapPoint.mapPointWithCONGCoord(BookmarkResource.getInstance().getDBHelperManager().selectBookMarkData(i).getLatitude(),
+                                BookmarkResource.getInstance().getDBHelperManager().selectBookMarkData(i).getLongitude()));
+                        marker.setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
+                        marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+                        mapView.addPOIItem(marker);
+                    }
+                    break;
             }
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("정말 종료하시겠습니까?");
+        dialog.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        dialog.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        dialog.show();
+    }
 }
