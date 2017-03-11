@@ -8,10 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.melnykov.fab.FloatingActionButton;
 import com.yangha.Bookmark.Application.BookmarkResource;
 import com.yangha.Bookmark.Dto.DtoBookmark;
 import com.yangha.Bookmark.R;
@@ -23,6 +25,8 @@ public class DetailActivity extends BaseActivity {
     private EditText edt_title, edt_content;
     private RatingBar rating;
     private Spinner spinner_category;
+    private ImageView imageView;
+    private FloatingActionButton share_btn, edit_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,34 @@ public class DetailActivity extends BaseActivity {
         spinner_category.setSelection(mDto.getCategory());
         spinner_category.setFocusable(false);
         spinner_category.setClickable(false);
+
+        share_btn = (FloatingActionButton)findViewById(R.id.detail_share_btn);
+        share_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        edit_btn = (FloatingActionButton)findViewById(R.id.detail_edit_btn);
+        edit_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edt_content.setText("");
+                edt_content.setFocusable(true);
+                edt_content.setClickable(true);
+
+                rating.setRating(2.5f);
+                rating.setFocusable(false);
+                rating.setClickable(false);
+
+                spinner_category.setAdapter(new CategoryAdapter(BookmarkResource.getInstance().getDBHelperManager().selectCategory()));
+                spinner_category.setSelection(0);
+                spinner_category.setFocusable(false);
+                spinner_category.setClickable(false);
+
+            }
+        });
     }
 
     @Override
