@@ -33,6 +33,7 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
     private MapView mapView;
     private MapPOIItem marker;
     private MapCircle circle1, circle2;
+    int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,6 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
         fab2 = (FloatingActionButton) findViewById(R.id.fab_add);
         marker = new MapPOIItem();
         gps = new GpsInfo(this);
-        marker = new MapPOIItem();
         mapView = new MapView(this);
         mapView.setDaumMapApiKey(API_KEY);
         circle1 = new MapCircle(
@@ -124,7 +124,11 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
 
             @Override
             public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
-
+                // 사용자가 마커의 말풍선을 클릭했을 때 호출?
+                index = mapPOIItem.getTag();
+                if (index != 0){
+                    relayout(RELAYOUT_DETAILACTIVITY,index);
+                }
             }
 
             @Override
@@ -177,7 +181,7 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
                     for (int i = 0; i<bookmark.size() ; i++) {
                         MapPOIItem marker2 = new MapPOIItem();
                         marker2.setItemName(bookmark.get(i).getTitle());
-                        marker2.setTag(1);
+                        marker2.setTag(bookmark.get(i).getIndex());
                         Log.i(TAG, bookmark.get(i).getTitle()+" "+bookmark.get(i).getLatitude()+" "+bookmark.get(i).getLongitude());
                         marker2.setMapPoint(MapPoint.mapPointWithGeoCoord(bookmark.get(i).getLatitude(),
                                 bookmark.get(i).getLongitude()));
