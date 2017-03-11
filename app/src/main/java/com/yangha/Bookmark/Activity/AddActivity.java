@@ -50,6 +50,7 @@ public class AddActivity extends BaseActivity implements LocationListener {
     private final int ALBUM_REQUEST = 11;
     private ImageView image;
     private Uri uri;
+    private File file =null;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +97,7 @@ public class AddActivity extends BaseActivity implements LocationListener {
             public void onClick(View v) {
 //                lat 37.484269037° lng 126.9296760126°
                 BookmarkResource.getInstance().getDBHelperManager().insertData(
-                        gps.getLongitude(),gps.getLatitude(), title.getText().toString(), uri.getPath(), category.getSelectedItemPosition(), content.getText().toString(), rating.getRating(), "0");
+                        gps.getLongitude(),gps.getLatitude(), title.getText().toString(), file.getAbsolutePath(), category.getSelectedItemPosition(), content.getText().toString(), rating.getRating(), "0");
                 Toast.makeText(getApplicationContext(), "데이터가 입력되었습니다.", Toast.LENGTH_SHORT).show();
                 relayout(RELAYOUT_MAINACTIVITY,0);
             }
@@ -184,7 +185,6 @@ public class AddActivity extends BaseActivity implements LocationListener {
     @TargetApi(Build.VERSION_CODES.N)
     private String fileSave(Bitmap imageBitmap){
         Log.i(TAG, "file Save log");
-        File file =null;
         try {
             //외부 저장소 갤리러 경로 가져오기(bookmark 디렉토리를 만들어주기)
             String path = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getAbsolutePath()+"/bookmark/";
