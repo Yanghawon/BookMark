@@ -1,10 +1,13 @@
 package com.yangha.Bookmark.Activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Window;
@@ -83,5 +86,20 @@ public class BaseActivity extends AppCompatActivity implements LocationListener{
     @Override
     public void onProviderDisabled(String s) {
         Log.i(TAG,"current onProviderDisabled");
+    }
+
+    /**
+     * 외부 저장소 사용 권한 요청
+     */
+    private void permissionCheck(){
+        int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        String[] PERMISSIONS_STORAGE = {
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        };
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, 1);
+        }
     }
 }

@@ -1,7 +1,9 @@
 package com.yangha.Bookmark.Activity;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.icu.text.SimpleDateFormat;
@@ -12,7 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,43 +32,58 @@ import com.yangha.Bookmark.Application.BookmarkResource;
 import com.yangha.Bookmark.R;
 import com.yangha.Bookmark.util.GpsInfo;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class AddActivity extends BaseActivity implements LocationListener {
+import static android.os.Environment.DIRECTORY_PICTURES;
 
+@TargetApi(Build.VERSION_CODES.N)
+public class AddActivity extends BaseActivity implements LocationListener {
     private FloatingActionButton listAddBtn;
     private Button photoAddBtn;
     private Spinner spinner;
     private final int CAMERA_REQUEST = 10;
     private final int ALBUM_REQUEST = 11;
-    private Uri uri;
     private ImageView image;
-    private SimpleDateFormat dateFormat;
+    private Uri uri;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            dateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
-        }
         photoAddBtn = (Button) findViewById(R.id.add_photo_btn);
         photoAddBtn.setOnClickListener(new View.OnClickListener() {
-            @TargetApi(Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
-                //카메라 요청.
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, CAMERA_REQUEST);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(AddActivity.this);
+                dialog.setTitle("사진 앨범?");
+                dialog.setPositiveButton("카메라", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //카메라 요청.
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, CAMERA_REQUEST);
+                    }
+                });
+                dialog.setNegativeButton("앨범", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+                        startActivityForResult(intent, ALBUM_REQUEST);
+                    }
+                });
+                dialog.show();
             }
         });
         listAddBtn = (FloatingActionButton) findViewById(R.id.add_list_btn);
         spinner = (Spinner) findViewById(R.id.add_spinner);
         image = (ImageView) findViewById(R.id.add_photo);
         spinner.setAdapter(new CategoryAdapter(BookmarkResource.getInstance().getDBHelperManager().selectCategory()));
-
         listAddBtn.setOnClickListener(new View.OnClickListener() {
             GpsInfo gps = new GpsInfo(AddActivity.this);
             EditText title = (EditText) findViewById(R.id.add_title);
@@ -145,9 +162,17 @@ public class AddActivity extends BaseActivity implements LocationListener {
             //카메라에서 찍은 데이터를 가지고 옴.
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
+            Log.i (TAG,"file save : "+fileSave(imageBitmap));
             image.setImageBitmap(imageBitmap);
         }else if(requestCode==ALBUM_REQUEST){
-
+            Bitmap image_bitmap 	= null;
+            try {
+                image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //배치해놓은 ImageView에 set
+            image.setImageBitmap(image_bitmap);
         }
     }
 
@@ -156,13 +181,41 @@ public class AddActivity extends BaseActivity implements LocationListener {
      * @param imageBitmap
      * 비트맵 객체를 넣으면 파일로 저장.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void fileSave(Bitmap imageBitmap){
+    @TargetApi(Build.VERSION_CODES.N)
+    private String fileSave(Bitmap imageBitmap){
+        Log.i(TAG, "file Save log");
+        File file =null;
         try {
-            FileOutputStream outputStream = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"temp"+new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss").format(new Date())+".jpeg");
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG,40,outputStream);
+            //외부 저장소 갤리러 경로 가져오기(bookmark 디렉토리를 만들어주기)
+            String path = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES).getAbsolutePath()+"/bookmark/";
+            //파일명 생성 날짜+시간
+            String filename = dateFormat.format(new Date())+".png";
+            File dir = new File(path);
+            file = new File(path+filename);
+            Log.i(TAG, "file dir make path : "+dir.mkdirs());
+            //외부 저장소가 정상적으로 연결되어 있는지 확인(기기별 문제점이 있을 수 있어서 미리 체크)
+            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()))
+                //외부 저장소가 정상적으로 연결되어 있으면 파일을 만들어줌(이미지 생성 전에 빈 파일 만들기)
+                if(!file.exists()&&file.createNewFile());
+            //빈 파일과 이미지를 넣어줄 binary outputstream에 연결.
+            FileOutputStream outputStream = new FileOutputStream(file);
+            //이미지를 만들어서 넣어주는 작업
+            if(imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream))
+                Log.i(TAG, "make file");
+
+            //갤러리에 넣기
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            uri = Uri.fromFile(file);
+            mediaScanIntent.setData(uri);
+            this.sendBroadcast(mediaScanIntent);
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            return file!=null?file.getAbsolutePath():"null";
         }
     }
+
 }
