@@ -48,7 +48,7 @@ public class AddActivity extends BaseActivity implements LocationListener {
     private Spinner spinner;
     private ImageView image;
     private Uri uri;
-    private File file =null;
+    private File file =new File(File.pathSeparator);
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
 
     @Override
@@ -172,6 +172,7 @@ public class AddActivity extends BaseActivity implements LocationListener {
             Bitmap image_bitmap = null;
             try {
                 image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                Log.i(TAG, "file save : " + fileSave(image_bitmap));
             } catch (IOException e) {
                 e.printStackTrace();
             }
