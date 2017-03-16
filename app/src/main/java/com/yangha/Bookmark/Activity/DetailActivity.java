@@ -59,36 +59,33 @@ public class DetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
         intent = getIntent();
-        Log.i(TAG,""+intent.getIntExtra("selectedID",0));
         mDto= BookmarkResource.getInstance().getDBHelperManager().selectBookMarkData(intent.getExtras().getInt("selectedID"));
+
         edt_title = (EditText) findViewById(R.id.detail_title);
         edt_title.setText(mDto.getTitle());
-        edt_title.setFocusable(false);
-        edt_title.setClickable(false);
+        edt_title.setFocusableInTouchMode(false);
 
         edt_content = (EditText) findViewById(R.id.detail_content);
         edt_content.setText(mDto.getContent());
-        edt_content.setFocusable(false);
-        edt_content.setClickable(false);
+        edt_content.setFocusableInTouchMode(false);
 
         rating = (RatingBar) findViewById(R.id.detail_ratingbar);
         rating.setRating(mDto.getRating());
-        rating.setFocusable(false);
-        rating.setClickable(false);
+        rating.setIsIndicator(true);
 
         spinner_category = (Spinner) findViewById(R.id.detail_spinner);
         spinner_category.setAdapter(new CategoryAdapter(BookmarkResource.getInstance().getDBHelperManager().selectCategory()));
         spinner_category.setSelection(mDto.getCategory());
-        spinner_category.setFocusable(false);
-        spinner_category.setClickable(false);
+        spinner_category.setFocusableInTouchMode(false);
+
 
         imageView = (ImageView) findViewById(R.id.detail_photo);
         Bitmap bitmap = BitmapFactory.decodeFile(mDto.getImage());
         imageView.setImageBitmap(bitmap);
 
         detail_photo_btn = (Button) findViewById(R.id.detail_photo_btn);
-        detail_photo_btn.setFocusable(false);
         detail_photo_btn.setClickable(false);
 
         ok_btn = (FloatingActionButton) findViewById(R.id.detail_OK_btn);
@@ -132,19 +129,15 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 edt_content.setText("");
-                edt_content.setFocusable(true);
-                edt_content.setClickable(true);
+                edt_content.setFocusableInTouchMode(true);
 
                 rating.setRating(2.5f);
-                rating.setFocusable(true);
-                rating.setClickable(true);
+                rating.setIsIndicator(false);
 
                 spinner_category.setAdapter(new CategoryAdapter(BookmarkResource.getInstance().getDBHelperManager().selectCategory()));
                 spinner_category.setSelection(0);
-                spinner_category.setFocusable(true);
-                spinner_category.setClickable(true);
+                spinner_category.setFocusableInTouchMode(true);
 
-                detail_photo_btn.setFocusable(true);
                 detail_photo_btn.setClickable(true);
 
                 edit_btn.setVisibility(View.INVISIBLE);
@@ -162,6 +155,7 @@ public class DetailActivity extends BaseActivity {
                                 mDto.setImage(uri.getPath());
                                 BookmarkResource.getInstance().getDBHelperManager().updateBookMarkData(mDto);
                                 Toast.makeText(getBaseContext(), "편집이 성공적으로 완료 되었습니다.", Toast.LENGTH_SHORT).show();
+                                relayout(RELAYOUT_LISTACTIVITY,0);
                             }
                         });
                         dialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {

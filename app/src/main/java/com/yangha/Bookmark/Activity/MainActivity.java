@@ -133,32 +133,6 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
             }
         });
 
-        mapView.setPOIItemEventListener(new MapView.POIItemEventListener() {
-            @Override
-            public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
-                // 사용자가 MapView 에 등록된 POI Item 아이콘(마커)를 터치한 경우 호출된다
-            }
-
-            @Override
-            public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
-                // 사용자가 마커의 말풍선을 클릭했을 때 호출?
-                index = mapPOIItem.getTag();
-                if (index != 0) {
-                    relayout(RELAYOUT_DETAILACTIVITY, index);
-                }
-            }
-
-            @Override
-            public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
-
-            }
-
-            @Override
-            public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
-
-            }
-        });
-
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
