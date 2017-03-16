@@ -52,15 +52,16 @@ public class DetailActivity extends BaseActivity {
     private Uri uri;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
 
-    Intent intent = getIntent();
-    DtoBookmark mDto = BookmarkResource.getInstance().getDBHelperManager().selectBookMarkData(intent.getExtras().getInt("selectedID"));
+    private Intent intent;
+    private DtoBookmark mDto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        intent = getIntent();
         Log.i(TAG,""+intent.getIntExtra("selectedID",0));
-
+        mDto= BookmarkResource.getInstance().getDBHelperManager().selectBookMarkData(intent.getExtras().getInt("selectedID"));
         edt_title = (EditText) findViewById(R.id.detail_title);
         edt_title.setText(mDto.getTitle());
         edt_title.setFocusable(false);

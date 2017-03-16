@@ -27,7 +27,7 @@ import net.daum.mf.map.api.MapView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends BaseActivity implements MapView.CurrentLocationEventListener {
+public class MainActivity extends BaseActivity implements MapView.CurrentLocationEventListener, MapView.POIItemEventListener {
 
     private static String API_KEY = "17ab215709e639add24c6b924c031c70";
     private FloatingActionButton fab1, fab2, fab_menuDown, fab_menu1, fab_menu2, fab_menu3, fab_menu4;
@@ -35,6 +35,7 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
     private GpsInfo gps;
     private MapView mapView;
     private MapPOIItem marker;
+    private View cell_view;
     private MapCircle circle1, circle2;
     int index;
     boolean flag;
@@ -58,8 +59,12 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
 
         marker = new MapPOIItem();
         gps = new GpsInfo(this);
+        ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
         mapView = new MapView(this);
         mapView.setDaumMapApiKey(API_KEY);
+        mapViewContainer.addView(mapView);
+        marker = new MapPOIItem();
+        gps = new GpsInfo(this);
         circle1 = new MapCircle(
                 MapPoint.mapPointWithGeoCoord(gps.getLatitude(), gps.getLongitude()), // center
                 100, // radius
@@ -72,8 +77,6 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
                 Color.argb(40, 0, 0, 0), // 원의 색상
                 Color.argb(0, 0, 0, 0) // 원 안의 색상
         );
-        ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
-        mapViewContainer.addView(mapView);
         mapView.setCurrentLocationEventListener(this);
         mapView.setMapViewEventListener(new MapView.MapViewEventListener() {
             @Override
@@ -224,7 +227,7 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
                 case 1:
                     mapView.removeAllCircles();
                     mapView.removeAllPOIItems();
-                    marker.setItemName("현재 위치");
+                    marker.setItemName("현재위치");
                     marker.setTag(0);
                     marker.setMapPoint(MapPoint.mapPointWithGeoCoord(gps.getLatitude(), gps.getLongitude()));
                     marker.setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
@@ -240,6 +243,7 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
                     ArrayList<DtoBookmark> bookmark = BookmarkResource.getInstance().getDBHelperManager().selectBookMarkDataAll(0, 0, 0);
                     for (int i = 0; i < bookmark.size(); i++) {
                         MapPOIItem marker2 = new MapPOIItem();
+                        marker2.setCustomCalloutBalloon(cell_view);
                         marker2.setItemName(bookmark.get(i).getTitle());
                         marker2.setTag(bookmark.get(i).getIndex());
                         Log.i(TAG, bookmark.get(i).getTitle() + " " + bookmark.get(i).getLatitude() + " " + bookmark.get(i).getLongitude());
@@ -249,6 +253,7 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
                         marker2.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
                         mapView.addPOIItem(marker2);
                     }
+                    mapView.setPOIItemEventListener(MainActivity.this);
                     break;
             }
         }
@@ -297,5 +302,31 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
     public void onLocationChanged(Location location) {
         super.onLocationChanged(location);
         handler.sendEmptyMessage(1);
+    }
+
+    @Override
+    public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
+        // 사용자가 MapView 에 등록된 POI Item 아이콘(마커)를 터치한 경우 호출된다
+        Log.i(TAG, "onPOIItemSelected"+mapPOIItem.getItemName());
+    }
+
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
+        // 사용자가 마커의 말풍선을 클릭했을 때 호출?
+        Log.i(TAG, "onCalloutBalloonOfPOIItemTouched"+mapPOIItem.getItemName());
+        index = mapPOIItem.getTag();
+        if (index != 0){
+            relayout(RELAYOUT_DETAILACTIVITY,index);
+        }
+    }
+
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
+        Log.i(TAG, "onCalloutBalloonOfPOIItemTouched"+mapPOIItem.getItemName());
+    }
+
+    @Override
+    public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
+
     }
 }
