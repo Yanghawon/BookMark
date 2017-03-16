@@ -7,11 +7,14 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.TextView;
 
-import com.melnykov.fab.FloatingActionButton;
 import com.yangha.Bookmark.Application.BookmarkResource;
 import com.yangha.Bookmark.Dto.DtoBookmark;
 import com.yangha.Bookmark.R;
@@ -27,13 +30,14 @@ import java.util.ArrayList;
 public class MainActivity extends BaseActivity implements MapView.CurrentLocationEventListener {
 
     private static String API_KEY = "17ab215709e639add24c6b924c031c70";
-    private FloatingActionButton fab1;
-    private FloatingActionButton fab2;
+    private FloatingActionButton fab1, fab2, fab_menuDown, fab_menu1, fab_menu2, fab_menu3, fab_menu4;
+    private TextView menu1_tv, menu2_tv, menu3_tv, menu4_tv;
     private GpsInfo gps;
     private MapView mapView;
     private MapPOIItem marker;
     private MapCircle circle1, circle2;
     int index;
+    boolean flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,16 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
 
         fab1 = (FloatingActionButton) findViewById(R.id.fab_list);
         fab2 = (FloatingActionButton) findViewById(R.id.fab_add);
+        fab_menuDown = (FloatingActionButton) findViewById(R.id.fab_menuDown);
+        fab_menu1 = (FloatingActionButton) findViewById(R.id.fab_menu1);
+        fab_menu2 = (FloatingActionButton) findViewById(R.id.fab_menu2);
+        fab_menu3 = (FloatingActionButton) findViewById(R.id.fab_menu3);
+        fab_menu4 = (FloatingActionButton) findViewById(R.id.fab_menu4);
+        menu1_tv = (TextView) findViewById(R.id.menu1_tv);
+        menu2_tv = (TextView) findViewById(R.id.menu2_tv);
+        menu3_tv = (TextView) findViewById(R.id.menu3_tv);
+        menu4_tv = (TextView) findViewById(R.id.menu4_tv);
+
         marker = new MapPOIItem();
         gps = new GpsInfo(this);
         mapView = new MapView(this);
@@ -57,7 +71,7 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
                 200, // radius
                 Color.argb(40, 0, 0, 0), // 원의 색상
                 Color.argb(0, 0, 0, 0) // 원 안의 색상
-                    );
+        );
         ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
         mapViewContainer.addView(mapView);
         mapView.setCurrentLocationEventListener(this);
@@ -126,8 +140,8 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
             public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
                 // 사용자가 마커의 말풍선을 클릭했을 때 호출?
                 index = mapPOIItem.getTag();
-                if (index != 0){
-                    relayout(RELAYOUT_DETAILACTIVITY,index);
+                if (index != 0) {
+                    relayout(RELAYOUT_DETAILACTIVITY, index);
                 }
             }
 
@@ -154,6 +168,52 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
                 relayout(RELAYOUT_ADDACTIVITY, 0);
             }
         });
+        fab_menu1.setVisibility(View.INVISIBLE);
+        fab_menu2.setVisibility(View.INVISIBLE);
+        fab_menu3.setVisibility(View.INVISIBLE);
+        fab_menu4.setVisibility(View.INVISIBLE);
+        menu1_tv.setVisibility(View.INVISIBLE);
+        menu2_tv.setVisibility(View.INVISIBLE);
+        menu3_tv.setVisibility(View.INVISIBLE);
+        menu4_tv.setVisibility(View.INVISIBLE);
+        fab_menuDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation animation = new AlphaAnimation(0, 1);
+                animation.setDuration(1000);
+                if (flag == false) {
+                    fab_menu1.setVisibility(View.VISIBLE);
+                    fab_menu2.setVisibility(View.VISIBLE);
+                    fab_menu3.setVisibility(View.VISIBLE);
+                    fab_menu4.setVisibility(View.VISIBLE);
+                    menu1_tv.setVisibility(View.VISIBLE);
+                    menu2_tv.setVisibility(View.VISIBLE);
+                    menu3_tv.setVisibility(View.VISIBLE);
+                    menu4_tv.setVisibility(View.VISIBLE);
+                    fab_menu1.setAnimation(animation);
+                    fab_menu2.setAnimation(animation);
+                    fab_menu3.setAnimation(animation);
+                    fab_menu4.setAnimation(animation);
+                    menu1_tv.setAnimation(animation);
+                    menu2_tv.setAnimation(animation);
+                    menu3_tv.setAnimation(animation);
+                    menu4_tv.setAnimation(animation);
+
+                    flag = true;
+                } else {
+                    fab_menu1.setVisibility(View.INVISIBLE);
+                    fab_menu2.setVisibility(View.INVISIBLE);
+                    fab_menu3.setVisibility(View.INVISIBLE);
+                    fab_menu4.setVisibility(View.INVISIBLE);
+                    menu1_tv.setVisibility(View.INVISIBLE);
+                    menu2_tv.setVisibility(View.INVISIBLE);
+                    menu3_tv.setVisibility(View.INVISIBLE);
+                    menu4_tv.setVisibility(View.INVISIBLE);
+
+                    flag = false;
+                }
+            }
+        });
     }
 
     Handler handler = new Handler() {
@@ -177,12 +237,12 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
                     mapView.addCircle(circle1);
                     circle2.setTag(200);
                     mapView.addCircle(circle2);
-                    ArrayList<DtoBookmark> bookmark = BookmarkResource.getInstance().getDBHelperManager().selectBookMarkDataAll(0,0,0);
-                    for (int i = 0; i<bookmark.size() ; i++) {
+                    ArrayList<DtoBookmark> bookmark = BookmarkResource.getInstance().getDBHelperManager().selectBookMarkDataAll(0, 0, 0);
+                    for (int i = 0; i < bookmark.size(); i++) {
                         MapPOIItem marker2 = new MapPOIItem();
                         marker2.setItemName(bookmark.get(i).getTitle());
                         marker2.setTag(bookmark.get(i).getIndex());
-                        Log.i(TAG, bookmark.get(i).getTitle()+" "+bookmark.get(i).getLatitude()+" "+bookmark.get(i).getLongitude());
+                        Log.i(TAG, bookmark.get(i).getTitle() + " " + bookmark.get(i).getLatitude() + " " + bookmark.get(i).getLongitude());
                         marker2.setMapPoint(MapPoint.mapPointWithGeoCoord(bookmark.get(i).getLatitude(),
                                 bookmark.get(i).getLongitude()));
                         marker2.setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
@@ -215,22 +275,22 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
 
     @Override
     public void onCurrentLocationUpdate(MapView mapView, MapPoint mapPoint, float v) {
-        Log.i(TAG,"onCurrentLocationUpdate");
+        Log.i(TAG, "onCurrentLocationUpdate");
     }
 
     @Override
     public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {
-        Log.i(TAG,"onCurrentLocationDeviceHeadingUpdate");
+        Log.i(TAG, "onCurrentLocationDeviceHeadingUpdate");
     }
 
     @Override
     public void onCurrentLocationUpdateFailed(MapView mapView) {
-        Log.i(TAG,"onCurrentLocationUpdateFailed");
+        Log.i(TAG, "onCurrentLocationUpdateFailed");
     }
 
     @Override
     public void onCurrentLocationUpdateCancelled(MapView mapView) {
-        Log.i(TAG,"onCurrentLocationUpdateCancelled");
+        Log.i(TAG, "onCurrentLocationUpdateCancelled");
     }
 
     @Override

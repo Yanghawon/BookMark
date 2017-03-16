@@ -18,6 +18,8 @@ import android.view.Window;
 
 public class BaseActivity extends AppCompatActivity implements LocationListener{
     public final String TAG = getClass().getName();
+    public final int CAMERA_REQUEST = 10;
+    public final int ALBUM_REQUEST = 11;
     /**
      * ListActivity로 이동 
      * */

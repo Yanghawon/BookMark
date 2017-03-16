@@ -1,40 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="com.android.support.design"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/map_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
-    </RelativeLayout>
-
-    <com.melnykov.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginStart="20dp"
+        android:layout_gravity="bottom|left"
+        android:layout_margin="20dp"
         android:src="@drawable/ic_view_list_black_24dp"
-        fab:backgroundTint="@color/colorPrimary"
-        fab:fabSize="mini"
-        fab:rippleColor="@color/colorPrimaryDark" />
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="normal"
+        app:rippleColor="@color/colorPrimaryDark" />
 
 
-    <com.melnykov.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|right"
         android:layout_margin="20dp"
         android:src="@drawable/ic_playlist_add_black_24dp"
-        fab:backgroundTint="@color/colorPrimary"
-        fab:fabSize="mini"
-        fab:rippleColor="@color/colorPrimaryDark" />
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="normal"
+        app:rippleColor="@color/colorPrimaryDark" />
 
-</RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_menuDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_view_list_black_24dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="normal"
+        app:rippleColor="@color/colorPrimaryDark" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_menu1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginRight="27dp"
+        android:layout_marginTop="80dp"
+        android:src="@drawable/ic_view_list_black_24dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="mini"
+        app:rippleColor="@color/colorPrimaryDark" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_menu2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginRight="27dp"
+        android:layout_marginTop="130dp"
+        android:src="@drawable/ic_view_list_black_24dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="mini"
+        app:rippleColor="@color/colorPrimaryDark" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_menu3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginRight="27dp"
+        android:layout_marginTop="180dp"
+        android:src="@drawable/ic_view_list_black_24dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="mini"
+        app:rippleColor="@color/colorPrimaryDark" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_menu4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginRight="27dp"
+        android:layout_marginTop="230dp"
+        android:src="@drawable/ic_view_list_black_24dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="mini"
+        app:rippleColor="@color/colorPrimaryDark" />
+
+    <TextView
+        android:id="@+id/menu1_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginRight="80dp"
+        android:layout_marginTop="93dp"
+        android:background="@android:color/white"
+        android:text="최근기록" />
+
+    <TextView
+        android:id="@+id/menu2_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginRight="80dp"
+        android:layout_marginTop="143dp"
+        android:background="@android:color/white"
+        android:text="테마" />
+
+    <TextView
+        android:id="@+id/menu3_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginRight="80dp"
+        android:layout_marginTop="193dp"
+        android:background="@android:color/white"
+        android:text="설정" />
+
+    <TextView
+        android:id="@+id/menu4_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginRight="80dp"
+        android:layout_marginTop="243dp"
+        android:background="@android:color/white"
+        android:text="도움말" />
+
+
+</android.support.design.widget.CoordinatorLayout>

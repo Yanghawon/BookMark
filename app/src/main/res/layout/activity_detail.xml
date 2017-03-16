@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/share_icon"/>
+            android:src="@drawable/share_icon" />
 
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/detail_edit_btn"
@@ -105,6 +105,16 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
-            android:src="@drawable/ic_mode_edit_black_24dp" />
+            android:src="@drawable/ic_mode_edit_black_24dp"
+            android:visibility="visible"/>
+
+        <com.melnykov.fab.FloatingActionButton
+            android:id="@+id/detail_OK_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/mina16"
+            android:visibility="invisible"/>
     </RelativeLayout>
 </LinearLayout>

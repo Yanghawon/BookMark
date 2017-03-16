@@ -100,6 +100,7 @@ public class DBHelperManager extends SQLiteOpenHelper {
      * @return
      */
     public DtoBookmark selectBookMarkData(int num) {
+        Log.i(TAG,"selectBookMarkData"+num);
         String sql = "select * from BookMark where b_index = " + num + ";";
         Cursor result = getReadableDatabase().rawQuery(sql, null);
 
@@ -248,5 +249,14 @@ public class DBHelperManager extends SQLiteOpenHelper {
             list.add(dto);
         }
         return list;
+    }
+    public void updateBookMarkData(DtoBookmark dto){
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("b_image", dto.getImage());
+        contentValues.put("b_category", dto.getCategory());
+        contentValues.put("b_content", dto.getContent());
+        contentValues.put("b_rating", dto.getRating());
+
     }
 }
