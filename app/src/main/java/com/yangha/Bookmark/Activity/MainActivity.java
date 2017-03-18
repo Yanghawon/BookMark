@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yangha.Bookmark.Application.BookmarkResource;
@@ -20,6 +21,7 @@ import com.yangha.Bookmark.Dto.DtoBookmark;
 import com.yangha.Bookmark.R;
 import com.yangha.Bookmark.util.GpsInfo;
 
+import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -61,6 +63,7 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
         ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
         mapView = new MapView(this);
         mapView.setDaumMapApiKey(API_KEY);
+        mapView.setCalloutBalloonAdapter(new CustomCalloutBalloonAdapter());
         mapViewContainer.addView(mapView);
         marker = new MapPOIItem();
         gps = new GpsInfo(this);
@@ -200,7 +203,10 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
                 case 1:
                     mapView.removeAllCircles();
                     mapView.removeAllPOIItems();
-                    marker.setItemName("현재위치");
+                    View cell_view1 = getLayoutInflater().inflate(R.layout.cell_item_view,null);
+                    ((TextView)cell_view1.findViewById(R.id.cell_item_tv)).setText("현재위치");
+                    (cell_view1.findViewById(R.id.cell_item_star)).setVisibility(View.VISIBLE);
+                    marker.setCustomCalloutBalloon(cell_view1);
                     marker.setTag(0);
                     marker.setMapPoint(MapPoint.mapPointWithGeoCoord(gps.getLatitude(), gps.getLongitude()));
                     marker.setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
@@ -216,15 +222,9 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
                     ArrayList<DtoBookmark> bookmark = BookmarkResource.getInstance().getDBHelperManager().selectBookMarkDataAll(0, 0, 0);
                     for (int i = 0; i < bookmark.size(); i++) {
                         MapPOIItem marker2 = new MapPOIItem();
-                        View cell_view = getLayoutInflater().inflate(R.layout.cell_item_view,null);
-                        marker2.setCustomCalloutBalloon(cell_view);
-                        ((TextView)cell_view.findViewById(R.id.cell_item_tv)).setText(bookmark.get(i).getTitle());
-                        (cell_view.findViewById(R.id.cell_item_star)).setVisibility(View.INVISIBLE);
-                        if (bookmark.get(i).getRating()>=4.0){
-                            (cell_view.findViewById(R.id.cell_item_star)).setVisibility(View.VISIBLE);
-                        }
-                        marker2.setItemName(bookmark.get(i).getTitle());
                         marker2.setTag(bookmark.get(i).getIndex());
+                        marker2.setItemName(bookmark.get(i).getTitle());
+
                         Log.i(TAG, bookmark.get(i).getTitle() + " " + bookmark.get(i).getLatitude() + " " + bookmark.get(i).getLongitude());
                         marker2.setMapPoint(MapPoint.mapPointWithGeoCoord(bookmark.get(i).getLatitude(),
                                 bookmark.get(i).getLongitude()));
@@ -307,5 +307,24 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
     @Override
     public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
 
+    }
+
+    private class CustomCalloutBalloonAdapter implements CalloutBalloonAdapter {
+        private final View mCalloutBalloon;
+        public CustomCalloutBalloonAdapter() {
+            mCalloutBalloon = getLayoutInflater().inflate(R.layout.cell_item_view, null);
+        }
+
+        @Override
+        public View getCalloutBalloon(MapPOIItem poiItem) {
+            ((ImageView) mCalloutBalloon.findViewById(R.id.cell_item_star)).setImageResource(R.drawable.ic_star_rate_black_18dp);
+            ((TextView) mCalloutBalloon.findViewById(R.id.cell_item_tv)).setText(poiItem.getItemName());
+            return mCalloutBalloon;
+        }
+
+        @Override
+        public View getPressedCalloutBalloon(MapPOIItem poiItem) {
+            return null;
+        }
     }
 }
