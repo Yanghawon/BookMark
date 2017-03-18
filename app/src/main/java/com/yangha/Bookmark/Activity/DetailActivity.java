@@ -78,7 +78,7 @@ public class DetailActivity extends BaseActivity {
         spinner_category = (Spinner) findViewById(R.id.detail_spinner);
         spinner_category.setAdapter(new CategoryAdapter(BookmarkResource.getInstance().getDBHelperManager().selectCategory()));
         spinner_category.setSelection(mDto.getCategory());
-        spinner_category.setFocusableInTouchMode(false);
+        spinner_category.setEnabled(false);
 
 
         imageView = (ImageView) findViewById(R.id.detail_photo);
@@ -86,7 +86,7 @@ public class DetailActivity extends BaseActivity {
         imageView.setImageBitmap(bitmap);
 
         detail_photo_btn = (Button) findViewById(R.id.detail_photo_btn);
-        detail_photo_btn.setClickable(false);
+        detail_photo_btn.setVisibility(View.GONE);
 
         ok_btn = (FloatingActionButton) findViewById(R.id.detail_OK_btn);
 
@@ -136,9 +136,9 @@ public class DetailActivity extends BaseActivity {
 
                 spinner_category.setAdapter(new CategoryAdapter(BookmarkResource.getInstance().getDBHelperManager().selectCategory()));
                 spinner_category.setSelection(0);
-                spinner_category.setFocusableInTouchMode(true);
+                spinner_category.setEnabled(true);
 
-                detail_photo_btn.setClickable(true);
+                detail_photo_btn.setVisibility(View.VISIBLE);
 
                 edit_btn.setVisibility(View.INVISIBLE);
                 ok_btn.setVisibility(View.VISIBLE);
@@ -146,6 +146,7 @@ public class DetailActivity extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         AlertDialog.Builder dialog = new AlertDialog.Builder(DetailActivity.this);
+                        dialog.setTitle("편집 하시겠습니까");
                         dialog.setPositiveButton("편집 완료", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

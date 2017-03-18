@@ -31,11 +31,10 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
 
     private static String API_KEY = "17ab215709e639add24c6b924c031c70";
     private FloatingActionButton fab1, fab2, fab_menuDown, fab_menu1, fab_menu2, fab_menu3, fab_menu4;
-    private TextView menu1_tv, menu2_tv, menu3_tv, menu4_tv;
+    private TextView menu1_tv, menu2_tv, menu3_tv, menu4_tv, cell_tv;
     private GpsInfo gps;
     private MapView mapView;
     private MapPOIItem marker;
-    private View cell_view;
     private MapCircle circle1, circle2;
     int index;
     boolean flag;
@@ -217,7 +216,13 @@ public class MainActivity extends BaseActivity implements MapView.CurrentLocatio
                     ArrayList<DtoBookmark> bookmark = BookmarkResource.getInstance().getDBHelperManager().selectBookMarkDataAll(0, 0, 0);
                     for (int i = 0; i < bookmark.size(); i++) {
                         MapPOIItem marker2 = new MapPOIItem();
+                        View cell_view = getLayoutInflater().inflate(R.layout.cell_item_view,null);
                         marker2.setCustomCalloutBalloon(cell_view);
+                        ((TextView)cell_view.findViewById(R.id.cell_item_tv)).setText(bookmark.get(i).getTitle());
+                        (cell_view.findViewById(R.id.cell_item_star)).setVisibility(View.INVISIBLE);
+                        if (bookmark.get(i).getRating()>=4.0){
+                            (cell_view.findViewById(R.id.cell_item_star)).setVisibility(View.VISIBLE);
+                        }
                         marker2.setItemName(bookmark.get(i).getTitle());
                         marker2.setTag(bookmark.get(i).getIndex());
                         Log.i(TAG, bookmark.get(i).getTitle() + " " + bookmark.get(i).getLatitude() + " " + bookmark.get(i).getLongitude());
